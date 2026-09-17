@@ -1,0 +1,174 @@
+
+
+.clients-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+
+.clients-header {
+  display: flex;
+  justifyContent: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.clients-header .brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+
+.clients-toolbar {
+  display: flex;
+  justifyContent: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  width: 280px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-left: 6px;
+}
+
+
+button {
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-delete {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.btn-delete:hover {
+  background-color: #fee2e2;
+}
+
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.clients-table th,
+.clients-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.clients-table th {
+  background-color: #f8fafc;
+}
+
+.clients-table td:last-child {
+  text-align: right;
+}
+
+.clients-table td:last-child button {
+  margin-left: 5px;
+}
+
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justifyContent: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card form div {
+  margin-bottom: 12px;
+}
+
+.card label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.card input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.card-buttons {
+  display: flex;
+  justifyContent: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 12px;
+  margin: 4px 0 0 0;
+}
+
+
+.pagination {
+  display: flex;
+  justifyContent: space-between;
+  align-items: center;
+  margin-top: 20px;
+}

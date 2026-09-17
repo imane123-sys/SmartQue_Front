@@ -1,0 +1,236 @@
+.sq-mgmt-section {
+  padding: 64px 0;
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.sq-mgmt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+
+.sq-mgmt-left {
+  position: relative;
+}
+
+.sq-mgmt-img-container {
+  position: relative;
+  width: 100%;
+}
+
+.sq-mgmt-img {
+  width: 100%;
+  height: 330px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: var(--sq-shadow-soft);
+  display: block;
+}
+
+.sq-mgmt-overlay-card {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 11px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.sq-mgmt-overlay-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.sq-mgmt-sq-logo {
+  width: 34px;
+  height: 34px;
+  background-color: #0f172a;
+  color: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sq-font-heading);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+}
+
+.sq-mgmt-overlay-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sq-mgmt-overlay-title {
+  font-family: var(--sq-font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.sq-mgmt-overlay-subtitle {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.sq-mgmt-badge-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sq-badge-active-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+
+.sq-mgmt-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.sq-mgmt-pretitle {
+  font-family: var(--sq-font-heading);
+  font-size: 11px;
+  font-weight: 800;
+  color: #0084ff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.sq-mgmt-headline {
+  font-family: var(--sq-font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px 0;
+}
+
+.sq-mgmt-desc {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #64748b;
+  margin: 0 0 22px 0;
+}
+
+.sq-mgmt-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sq-mgmt-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.sq-mgmt-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sq-mgmt-bar-label {
+  font-family: var(--sq-font-heading);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.sq-mgmt-bar-val {
+  font-family: var(--sq-font-heading);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0084ff;
+}
+
+.sq-mgmt-track {
+  width: 100%;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.sq-mgmt-fill {
+  height: 100%;
+  background-color: #0084ff;
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sq-mgmt-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sq-font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0084ff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.sq-mgmt-link-btn:hover {
+  color: #006adc;
+  transform: translateX(3px);
+}
+
+@media (max-width: 960px) {
+  .sq-mgmt-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .sq-mgmt-img {
+    height: 280px;
+  }
+
+  .sq-mgmt-headline {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sq-mgmt-overlay-card {
+    position: static;
+    margin-top: 14px;
+    box-shadow: var(--sq-shadow-soft);
+  }
+
+  .sq-mgmt-headline {
+    font-size: 21px;
+  }
+}

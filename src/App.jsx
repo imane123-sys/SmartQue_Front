@@ -1,34 +1,33 @@
-import { useState, useEffect } from 'react'
-import RegisterClient from './Components/RegisterClient'
-import Login from './Components/Login'
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./Components/Login";
+import RegisterClient from "./Components/RegisterClient";
+import RegisterEtablissement from "./Components/RegisterEtablissement";
+import Clients from "./Components/clients/Clients";
+import Services from "./Components/services/Services";
+import AuthGuard from "./Components/route_guard/AuthGuard";
+import { Tickets } from "lucide-react";
+import LandingV2 from "./Components/landing_v2/LandingV2";
+import SearchSection from "./Components/SearchSection/SearchSection";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    return window.location.pathname === '/login' ? 'login' : 'register'
-  })
-
-  useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPage(window.location.pathname === '/login' ? 'login' : 'register')
-    }
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
-
-  const navigate = (page) => {
-    window.history.pushState({}, '', page === 'login' ? '/login' : '/register')
-    setCurrentPage(page)
-  }
-
   return (
-    <>
-      {currentPage === 'login' ? (
-        <Login onNavigateRegister={() => navigate('register')} />
-      ) : (
-        <RegisterClient onNavigateLogin={() => navigate('login')} />
-      )}
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<LandingV2 />} />
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<RegisterClient />} />
+      <Route path="/register-etablissement" element={<RegisterEtablissement />} />
+      <Route path="/Etablissement-service" element={<SearchSection />} />
+
+      <Route element={<AuthGuard role="ADMIN" />}></Route>
+
+      <Route path="/clients" element={<Clients />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/tickets" element={Tickets} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

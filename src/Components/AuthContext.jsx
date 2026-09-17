@@ -1,100 +1,81 @@
 import { createContext, useContext, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { login as loginApi } from "../Api/AuthService.js";
+import { login as loginApi } from "../Api/AuthService";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
   const [user, setUser] = useState(() => {
-    const storedToken = localStorage.getItem("token");
-    if (!storedToken) return {};
+    const token = localStorage.getItem("token");
+
+    if (!token) return null;
+
     try {
-      const decoded = jwtDecode(storedToken);
+      const decoded = jwtDecode(token);
+
       return {
         email: decoded.sub,
-        role: decoded.authorities || decoded.role || decoded.roles || [],
+        role: decoded.role,
       };
     } catch {
-      return {};
+      return null;
     }
   });
 
-  const [error, setError] = useState(null);
-
-  const extractToken = (response) => {
-    if (typeof response === "string") return response;
-    if (typeof response === "object" && response !== null) {
-      return (
-        response.token ||
-        response.accessToken ||
-        response.access_token ||
-        response.data?.token ||
-        response.data?.accessToken ||
-        response.data?.access_token ||
-        null
-      );
-    }
-    return null;
-  };
-
-  const extractRole = (decoded, response) => {
-    const fromJwt =
-      decoded.authorities ||
-      decoded.authority ||
-      decoded.role ||
-      decoded.roles ||
-      decoded.scope;
-    if (fromJwt) return fromJwt;
-
-    if (typeof response === "object" && response !== null) {
-      return response.role || response.roles || response.data?.role || [];
-    }
-    return [];
-  };
+  const [error, setError] = useState("");
 
   const login = async (credentials) => {
-    setError(null);
     try {
+      setError("");
+
       const response = await loginApi(credentials);
-      const jwtToken = extractToken(response);
 
-      if (!jwtToken || typeof jwtToken !== "string") {
-        throw new Error("Aucun jeton valide reçu du serveur.");
-      }
+      const token = response.data.token;
 
-      const decoded = jwtDecode(jwtToken);
+      const decoded = jwtDecode(token);
+
       const userData = {
         email: decoded.sub,
-        role: extractRole(decoded, response),
+        role: decoded.role,
       };
 
-      localStorage.setItem("token", jwtToken);
+      localStorage.setItem("token", token);
 
-      setToken(jwtToken);
+      setToken(token);
       setUser(userData);
+
       return true;
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Identifiants incorrects.",
-      );
+    } catch (error) {
+      setError("Email ou mot de passe incorrect");
       return false;
     }
   };
 
   const logout = () => {
+    localStorage.removeItem("token");
+
     setToken(null);
     setUser(null);
-    localStorage.removeItem("token");
   };
 
   return (
     <AuthContext.Provider
-      value={{ token, user, error, login, logout, isAuthenticated: !!token }}
+      value={{
+        token,
+        user,
+        error,
+        login,
+        logout,
+        isAuthenticated: !!token,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }

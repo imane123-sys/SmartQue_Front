@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --sq-brand-50: #f0f7ff;
+  --sq-brand-100: #e0effe;
+  --sq-brand-200: #bae0fd;
+  --sq-brand-300: #7cc5fb;
+  --sq-brand-400: #38a5f8;
+  --sq-brand-500: #0084ff;
+  --sq-brand-600: #0070f3;
+  --sq-brand-700: #006adc;
+  --sq-brand-800: #0054b3;
+  --sq-brand-900: #044793;
+
+  --sq-slate-50: #f8fafc;
+  --sq-slate-100: #f1f5f9;
+  --sq-slate-200: #e2e8f0;
+  --sq-slate-300: #cbd5e1;
+  --sq-slate-400: #94a3b8;
+  --sq-slate-500: #64748b;
+  --sq-slate-600: #475569;
+  --sq-slate-700: #334155;
+  --sq-slate-800: #1e293b;
+  --sq-slate-900: #0f172a;
+  --sq-slate-950: #030712;
+
+  --sq-emerald-500: #10b981;
+  --sq-emerald-600: #059669;
+  --sq-emerald-100: #d1fae5;
+  --sq-emerald-50: #ecfdf5;
+
+  --sq-font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --sq-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --sq-shadow-soft: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  --sq-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --sq-shadow-hover: 0 20px 35px -5px rgba(0, 132, 255, 0.12), 0 10px 15px -5px rgba(0, 0, 0, 0.04);
+}
+
+body {
+  background-color: #ffffff;
+  margin: 0;
+}
+
+.landing-v2-wrapper {
+  color-scheme: light;
+  font-family: var(--sq-font-body);
+  color: var(--sq-slate-800);
+  background-color: #ffffff;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.landing-v2-wrapper * {
+  box-sizing: border-box;
+}
+
+.landing-v2-wrapper h1,
+.landing-v2-wrapper h2,
+.landing-v2-wrapper h3,
+.landing-v2-wrapper h4,
+.landing-v2-wrapper h5,
+.landing-v2-wrapper h6 {
+  font-family: var(--sq-font-heading);
+  margin-top: 0;
+  color: #0f172a;
+}
+
+.landing-v2-wrapper p {
+  margin-top: 0;
+}
+
+.landing-v2-wrapper a {
+  text-decoration: none;
+}
+
+.landing-v2-wrapper button {
+  font-family: inherit;
+}
+
+
+.sq-container {
+  width: 80%;
+  max-width: 1380px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 1024px) {
+  .sq-container {
+    width: 90%;
+  }
+}
+
+@media (max-width: 640px) {
+  .sq-container {
+    width: 92%;
+  }
+}

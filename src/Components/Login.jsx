@@ -2,27 +2,16 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
+import { useNavigate, Link } from "react-router-dom";
 import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  Link,
-  TextField,
-  Typography,
-  Alert,
-} from "@mui/material";
-
-import {
-  ArrowForward,
-  Check,
-  Visibility,
-  VisibilityOff,
-  AutoAwesome,
-  Person,
-} from "@mui/icons-material";
-
+  Ticket,
+  ArrowLeft,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+} from "lucide-react";
 import { AuthContext } from "./AuthContext";
 import "../css/RegisterClient.css";
 
@@ -38,17 +27,9 @@ const loginSchema = yup.object({
     .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
 
-function Logo() {
-  return (
-    <Link href="/" underline="none" className="logo">
-      <Box className="logo-box">SQ</Box>
-      <Typography className="logo-text">SmartQueue</Typography>
-    </Link>
-  );
-}
-
 function Login({ onNavigateRegister }) {
-  const {login} = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -80,8 +61,11 @@ function Login({ onNavigateRegister }) {
         localStorage.setItem("user", JSON.stringify(response.user));
       }
 
-      setSuccessMessage("Connexion réussie !");
+      setSuccessMessage("Connexion réussie ! Redirection en cours...");
       reset();
+      setTimeout(() => {
+        navigate("/Etablissement-service");
+      }, 700);
     } catch (err) {
       setApiError(
         err?.response?.data?.message ||
@@ -92,158 +76,123 @@ function Login({ onNavigateRegister }) {
   };
 
   return (
-    <Box className="login-page register-page">
-      <Box className="login-visual">
-        <img
-          src="/smartqueue-login.png"
-          alt="SmartQueue"
-          className="login-image"
-        />
+    <div className="sq-reg-page">
+      <div className="sq-reg-container">
+        <header className="sq-reg-header">
+          <Link to="/" className="sq-reg-logo">
+            <div className="sq-reg-logo-icon">
+              <Ticket size={21} strokeWidth={2.4} />
+            </div>
+            <span className="sq-reg-logo-brand">SmartQueue</span>
+          </Link>
 
-        <Box className="login-overlay" />
+          <Link to="/" className="sq-reg-back">
+            <ArrowLeft size={15} strokeWidth={2.4} />
+            <span>Back to Home</span>
+          </Link>
+        </header>
 
-        <Box className="login-visual-content">
-          <Logo />
+        <div className="sq-reg-kicker">
+          <span className="sq-reg-kicker-dash"></span>
+          <span className="sq-reg-kicker-text">ESPACE CONNEXION</span>
+        </div>
 
-          <Box className="visual-text">
-            <Box className="login-kicker">
-              <AutoAwesome fontSize="small" />
-              Start smarter
-            </Box>
+        <h1 className="sq-reg-title">Bienvenue</h1>
+        <p className="sq-reg-subtitle">
+          Connectez-vous à votre espace SmartQueue.
+        </p>
 
-            <Typography className="visual-title">
-              Make every visit feel considered.
-            </Typography>
+        {apiError && (
+          <div className="sq-reg-alert sq-reg-alert-error">{apiError}</div>
+        )}
+        {successMessage && (
+          <div className="sq-reg-alert sq-reg-alert-success">
+            {successMessage}
+          </div>
+        )}
 
-            <Typography className="visual-description">
-              Create your SmartQueue account and bring calmer, clearer waits to
-              your team and customers.
-            </Typography>
-          </Box>
+        <form onSubmit={handleSubmit(onSubmit)} className="sq-reg-form">
+          <div className="sq-reg-field">
+            <label htmlFor="login-email" className="sq-reg-label">
+              Email
+            </label>
+            <div className={`sq-reg-input-wrap ${errors.email ? "error" : ""}`}>
+              <Mail size={16} className="sq-input-icon" />
+              <input
+                id="login-email"
+                type="email"
+                placeholder="alex@company.com"
+                {...register("email")}
+                className="sq-reg-input"
+              />
+            </div>
+            {errors.email && (
+              <span className="sq-reg-err-msg">{errors.email.message}</span>
+            )}
+          </div>
 
-          <Box className="login-visual-footer">
-            <Box className="status-card">
-              <Box className="check-icon">
-                <Check fontSize="small" />
-              </Box>
-
-              <Box>
-                <Typography className="status-title">
-                  Setup takes minutes
-                </Typography>
-
-                <Typography className="status-text">
-                  One workspace · every queue
-                </Typography>
-              </Box>
-            </Box>
-
-            <Typography className="trusted">
-              Built for modern service teams
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-
-      <Box className="login-form-side">
-        <Box className="login-form-wrap register-form-wrap">
-          <Box className="mobile-logo">
-            <Logo />
-          </Box>
-
-          <Box className="login-form-heading">
-            <Box className="eyebrow">
-              <Person fontSize="small" />
-              SIGN IN
-            </Box>
-
-            <Typography className="form-title">
-              Welcome back<span>.</span>
-            </Typography>
-
-            <Typography className="form-description">
-              Enter your credentials to access your SmartQueue workspace.
-            </Typography>
-          </Box>
-
-          {apiError && (
-            <Alert severity="error" sx={{ mt: 3 }}>
-              {apiError}
-            </Alert>
-          )}
-
-          {successMessage && (
-            <Alert severity="success" sx={{ mt: 3 }}>
-              {successMessage}
-            </Alert>
-          )}
-
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            className="register-form"
-          >
-            <TextField
-              fullWidth
-              label="Email"
-              placeholder="alex@company.com"
-              type="email"
-              {...register("email")}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-
-            <TextField
-              fullWidth
-              label="Mot de passe"
-              placeholder="Enter your password"
-              type={showPassword ? "text" : "password"}
-              {...register("password")}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              endIcon={<ArrowForward />}
-              className="sign-in-button"
-              disabled={isSubmitting}
+          <div className="sq-reg-field">
+            <label htmlFor="login-password" className="sq-reg-label">
+              Mot de passe
+            </label>
+            <div
+              className={`sq-reg-input-wrap ${errors.password ? "error" : ""}`}
             >
-              {isSubmitting ? "Connexion..." : "Se connecter"}
-            </Button>
-          </Box>
-
-          <Typography className="signup-text">
-            Vous n'avez pas de compte ?{" "}
-            <Link
-              href="/register"
-              onClick={(e) => {
-                if (onNavigateRegister) {
-                  e.preventDefault();
-                  onNavigateRegister();
+              <Lock size={16} className="sq-input-icon" />
+              <input
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••••••••••"
+                {...register("password")}
+                className="sq-reg-input"
+              />
+              <button
+                type="button"
+                className="sq-eye-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={
+                  showPassword
+                    ? "Masquer le mot de passe"
+                    : "Afficher le mot de passe"
                 }
-              }}
-            >
-              S'inscrire
-            </Link>
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && (
+              <span className="sq-reg-err-msg">{errors.password.message}</span>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="sq-reg-submit-btn"
+          >
+            <span>
+              {isSubmitting ? "Connexion en cours..." : "Se connecter"}
+            </span>
+            <ArrowRight size={16} strokeWidth={2.4} />
+          </button>
+        </form>
+
+        <p className="sq-reg-login-hint">
+          Vous n'avez pas de compte ?{" "}
+          <Link
+            to="/register"
+            className="sq-reg-login-link"
+            onClick={(e) => {
+              if (onNavigateRegister) {
+                e.preventDefault();
+                onNavigateRegister();
+              }
+            }}
+          >
+            S'inscrire
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
 

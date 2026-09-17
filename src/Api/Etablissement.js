@@ -10,10 +10,8 @@ export const etablissementApi = {
       },
     }),
 
-  getById: (id) =>
-    connexion.get(`/api/etablissements/${id}`),
+  getById: (id) => connexion.get(`/api/etablissements/${id}`),
 
-  // Trouver les établissements proches par service
   getProches: (serviceNom, latitude, longitude, rayonKm = 10) =>
     connexion.get("/api/etablissements/proches", {
       params: {
@@ -24,15 +22,10 @@ export const etablissementApi = {
       },
     }),
 
-  // Créer un établissement
-  create: (data) =>
-    connexion.post("/api/etablissements/create", data),
+  create: (data) => connexion.post("/api/etablissements/create", data),
 
-  // Modifier un établissement
-  update: (id, data) =>
-    connexion.put(`/api/etablissements/update/${id}`, data),
+  update: (id, data) => connexion.put(`/api/etablissements/update/${id}`, data),
 
-  // Supprimer un établissement
   delete: (id) =>
     connexion.delete("/api/etablissements/delete", {
       params: {

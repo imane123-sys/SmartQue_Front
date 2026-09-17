@@ -10,7 +10,7 @@ export const clientApi = {
       params: { email },
     }),
 
-  getAll: (page = 0, size = 10) =>
+  getAll: (page = 0, size = 2) =>
     connexion.get("/api/clients", {
       params: {
         page,

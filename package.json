@@ -16,9 +16,11 @@
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^1.46.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.88.0",
+    "react-router-dom": "^7.18.3",
     "yup": "^1.7.1"
   },
   "devDependencies": {

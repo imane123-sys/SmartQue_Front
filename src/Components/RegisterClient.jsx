@@ -2,30 +2,20 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
+import { Link, useNavigate } from "react-router-dom";
 import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  Link,
-  TextField,
-  Typography,
-  Alert,
-} from "@mui/material";
-
-import {
-  ArrowForward,
-  Visibility,
-  VisibilityOff,
-  PersonAdd,
-} from "@mui/icons-material";
+  Ticket,
+  ArrowLeft,
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+} from "lucide-react";
 
 import { registerClient as registerApi } from "../Api/AuthService";
-
-import "../css/RegisterClient.css";
+import "../css/RegisterHope.css";
 
 const registerSchema = yup.object({
   nom: yup
@@ -48,322 +38,207 @@ const registerSchema = yup.object({
   telephone: yup
     .string()
     .required("Le téléphone est obligatoire")
-    .matches(/^0[5-7][0-9]{8}$/, "Numéro de téléphone invalide"),
+    .matches(
+      /^0[5-7][0-9]{8}$/,
+      "Numéro de téléphone invalide (ex: 6 88 44 21 09)",
+    ),
 
   password: yup
     .string()
     .required("Le mot de passe est obligatoire")
     .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
-
-  role: yup
-    .string()
-    .required("Le rôle est obligatoire")
-    .oneOf(["ADMIN", "ETABLISSEMENT", "CLIENT"], "Rôle invalide"),
 });
 
-function Logo() {
-  return (
-    <Link href="/" underline="none" className="logo">
-      <Box className="logo-box">SQ</Box>
-
-      <Typography className="logo-text">SmartQueue</Typography>
-    </Link>
-  );
-}
-
-function RegisterClient() {
+export default function RegisterClient() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [accepted, setAccepted] = useState(false);
-
   const [apiError, setApiError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
-    handleSubmit,
+    handleSubmit: validerFormulaire,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
     resolver: yupResolver(registerSchema),
-
-    defaultValues: {
-      nom: "",
-      prenom: "",
-      email: "",
-      telephone: "",
-      password: "",
-      role: "CLIENT",
-    },
   });
 
-  const onSubmit = async (data) => {
-    if (!accepted) {
-      return;
-    }
+  function handleFullNameChange(e) {
+    const [prenom, ...nom] = e.target.value.trim().split(" ");
 
+    setValue("prenom", prenom, { shouldValidate: true });
+    setValue("nom", nom.join(" ").trim() || prenom, { shouldValidate: true });
+  }
+
+  function formaterTelephone(e) {
+    const telephone = e.target.value.replace(/\s+/g, "");
+    if (telephone.length === 9 && /^[5-7]/.test(telephone)) {
+      e.target.value = "0" + telephone;
+    }
+    register("telephone").onChange(e);
+  }
+
+  async function handleSubmit({ nom, prenom, email, telephone, password }) {
     setApiError(null);
-    setSuccessMessage(null);
+    setSuccess(false);
 
     try {
-      await registerApi(data);
+      await registerApi({
+        nom,
+        prenom,
+        email,
+        telephone,
+        password,
+        role: "CLIENT",
+      });
 
-      setSuccessMessage("Inscription réussie !");
-
+      setSuccess(true);
       reset();
-
-      setAccepted(false);
+      setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
-      setApiError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Erreur lors de l'inscription.",
-      );
+      setApiError(err.message || "Erreur lors de l'inscription.");
     }
-  };
+  }
+
+  const nameError = errors.prenom?.message || errors.nom?.message;
 
   return (
-    <Box
-      className="login-page register-page"
-      sx={{
-        height: "100vh",
-        maxHeight: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      <Box
-        className="login-visual"
-        sx={{
-          height: "100vh",
-          maxHeight: "100vh",
-          overflow: "hidden",
-          padding: { xs: "24px", md: "32px 44px" },
-        }}
-      >
-        <img
-          src="/register_picture.jpg?v=3"
-          alt="SmartQueue"
-          className="login-image"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 15%" }}
-        />
+    <div className="sq-reg-page">
+      <div className="sq-reg-container">
+        <header className="sq-reg-header">
+          <Link to="/" className="sq-reg-logo">
+            <div className="sq-reg-logo-icon">
+              <Ticket size={21} strokeWidth={2.4} />
+            </div>
+            <span className="sq-reg-logo-brand">SmartQueue</span>
+          </Link>
 
-        <Box className="login-visual-content">
-          <Logo />
+          <Link to="/" className="sq-reg-back">
+            <ArrowLeft size={15} strokeWidth={2.4} />
+            <span>Back to Home</span>
+          </Link>
+        </header>
 
-          <Box className="visual-text">
-            <Typography
-              className="visual-title"
-              sx={{ fontSize: "32px !important", lineHeight: "1.2 !important" }}
-            >
-              Make every visit feel considered.
-            </Typography>
+        <div className="sq-reg-kicker">
+          <span className="sq-reg-kicker-dash"></span>
+          <span className="sq-reg-kicker-text">GET STARTED FREE</span>
+        </div>
 
-            <Typography
-              className="visual-description"
-              sx={{ fontSize: "13.5px !important" }}
-            >
-              Create your SmartQueue account and bring calmer, clearer waits to
-              your team and customers.
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
+        <h1 className="sq-reg-title">Create Your Account</h1>
+        <p className="sq-reg-subtitle">
+          Join over 340,000 users skipping physical lines every day.
+        </p>
 
-      <Box
-        className="login-form-side"
-        sx={{
-          height: "100vh",
-          maxHeight: "100vh",
-          overflow: "hidden",
-          padding: { xs: "16px 20px", md: "20px 40px" },
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          className="login-form-wrap register-form-wrap"
-          sx={{ maxWidth: "420px", width: "100%" }}
+        {apiError && (
+          <div className="sq-reg-alert sq-reg-alert-error">{apiError}</div>
+        )}
+        {success && (
+          <div className="sq-reg-alert sq-reg-alert-success">
+            Inscription réussie ! Redirection vers la page de connexion...
+          </div>
+        )}
+
+        <form
+          onSubmit={validerFormulaire(handleSubmit)}
+          className="sq-reg-form"
+          noValidate
         >
-          <Box className="mobile-logo">
-            <Logo />
-          </Box>
-
-          <Box className="login-form-heading" sx={{ mb: 1 }}>
-            <Box className="eyebrow" sx={{ mb: 0.5, fontSize: "11px" }}>
-              <PersonAdd sx={{ fontSize: "16px !important" }} />
-              Create account
-            </Box>
-
-            <Typography
-              className="form-title"
-              sx={{
-                fontSize: "26px !important",
-                mb: "2px !important",
-                lineHeight: "1.15 !important",
-              }}
-            >
-              Join SmartQueue<span>.</span>
-            </Typography>
-
-            <Typography
-              className="form-description"
-              sx={{ mb: "10px !important", fontSize: "13px !important" }}
-            >
-              Set up your profile to start managing queues with ease.
-            </Typography>
-          </Box>
-
-          {apiError && (
-            <Alert severity="error" sx={{ mt: 1, mb: 1, py: 0.25 }}>
-              {apiError}
-            </Alert>
-          )}
-
-          {successMessage && (
-            <Alert severity="success" sx={{ mt: 1, mb: 1, py: 0.25 }}>
-              {successMessage}
-            </Alert>
-          )}
-
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            className="register-form"
-            sx={{
-              gap: "8px !important",
-              "& .MuiInputLabel-root": {
-                fontSize: "12px !important",
-                mb: "2px !important",
-              },
-              "& .MuiOutlinedInput-root .MuiOutlinedInput-input": {
-                padding: "7px 12px !important",
-                fontSize: "13px !important",
-              },
-              "& .register-name-grid, & .register-form-grid": {
-                gap: "8px !important",
-              },
-            }}
-          >
-            <Box className="register-name-grid">
-              <TextField
-                fullWidth
-                size="small"
-                label="Nom"
-                placeholder="Ramadane"
-                {...register("nom")}
-                error={!!errors.nom}
-                helperText={errors.nom?.message}
+          <div className="sq-reg-field">
+            <label className="sq-reg-label">FULL NAME</label>
+            <div className={`sq-reg-input-wrap ${nameError ? "error" : ""}`}>
+              <User size={16} className="sq-input-icon" />
+              <input
+                type="text"
+                placeholder="Sarah Connor"
+                {...register("fullName", { onChange: handleFullNameChange })}
+                className="sq-reg-input"
               />
+            </div>
+            {nameError && <span className="sq-reg-err-msg">{nameError}</span>}
+          </div>
 
-              <TextField
-                fullWidth
-                size="small"
-                label="Prénom"
-                placeholder="Imane"
-                {...register("prenom")}
-                error={!!errors.prenom}
-                helperText={errors.prenom?.message}
-              />
-            </Box>
-
-            <Box className="register-form-grid">
-              <TextField
-                fullWidth
-                size="small"
-                label="Email"
-                placeholder="ramadane@gmail.com"
+          <div className="sq-reg-field">
+            <label className="sq-reg-label">EMAIL ADDRESS</label>
+            <div className={`sq-reg-input-wrap ${errors.email ? "error" : ""}`}>
+              <Mail size={16} className="sq-input-icon" />
+              <input
                 type="email"
+                placeholder="sarah.connor@example.com"
                 {...register("email")}
-                error={!!errors.email}
-                helperText={errors.email?.message}
+                className="sq-reg-input"
               />
+            </div>
+            {errors.email && (
+              <span className="sq-reg-err-msg">{errors.email.message}</span>
+            )}
+          </div>
 
-              <TextField
-                fullWidth
-                size="small"
-                label="Téléphone"
-                placeholder="0612345678"
-                type="tel"
-                {...register("telephone")}
-                error={!!errors.telephone}
-                helperText={errors.telephone?.message}
-              />
-            </Box>
-
-            <TextField
-              fullWidth
-              size="small"
-              label="Mot de passe"
-              placeholder="Créer un mot de passe"
-              type={showPassword ? "text" : "password"}
-              {...register("password")}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                      size="small"
-                    >
-                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <input type="hidden" value="CLIENT" {...register("role")} />
-
-            <FormControlLabel
-              sx={{
-                my: "1px !important",
-                "& .terms-label": { fontSize: "11px !important", lineHeight: "1.3 !important" },
-              }}
-              control={
-                <Checkbox
-                  size="small"
-                  checked={accepted}
-                  onChange={(event) => setAccepted(event.target.checked)}
-                  sx={{ p: "4px !important" }}
-                />
-              }
-              label={
-                <Typography className="terms-label">
-                  J'accepte les conditions d'utilisation et la politique de
-                  confidentialité.
-                </Typography>
-              }
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              endIcon={<ArrowForward />}
-              className="sign-in-button"
-              disabled={isSubmitting || !accepted}
-              sx={{
-                height: "38px !important",
-                mt: "4px !important",
-                fontSize: "13.5px !important",
-              }}
+          <div className="sq-reg-field">
+            <label className="sq-reg-label">MOBILE PHONE</label>
+            <div
+              className={`sq-reg-input-wrap ${errors.telephone ? "error" : ""}`}
             >
-              {isSubmitting ? "Inscription..." : "Créer mon compte"}
-            </Button>
-          </Box>
+              <div className="sq-phone-prefix">+212</div>
+              <input
+                type="tel"
+                placeholder="6 88 44 21 09"
+                {...register("telephone")}
+                onChange={formaterTelephone}
+                className="sq-reg-input sq-phone-input"
+              />
+            </div>
+            {errors.telephone && (
+              <span className="sq-reg-err-msg">{errors.telephone.message}</span>
+            )}
+          </div>
 
-          <Typography
-            className="signup-text"
-            sx={{ mt: "10px !important", fontSize: "12.5px !important" }}
+          <div className="sq-reg-field">
+            <label className="sq-reg-label">CREATE PASSWORD</label>
+            <div
+              className={`sq-reg-input-wrap ${errors.password ? "error" : ""}`}
+            >
+              <Lock size={16} className="sq-input-icon" />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••••••••••"
+                {...register("password")}
+                className="sq-reg-input"
+              />
+              <button
+                type="button"
+                className="sq-eye-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && (
+              <span className="sq-reg-err-msg">{errors.password.message}</span>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="sq-reg-submit-btn"
           >
-            Vous avez déjà un compte ? <Link href="/login">Se connecter</Link>
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+            <span>
+              {isSubmitting ? "Creating Account..." : "Create Account"}
+            </span>
+            <ArrowRight size={16} strokeWidth={2.4} />
+          </button>
+        </form>
+
+        <p className="sq-reg-login-hint">
+          Already have an account?{" "}
+          <Link to="/login" className="sq-reg-login-link">
+            Log in
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
-
-export default RegisterClient;
