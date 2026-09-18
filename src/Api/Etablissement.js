@@ -12,13 +12,12 @@ export const etablissementApi = {
 
   getById: (id) => connexion.get(`/api/etablissements/${id}`),
 
-  getProches: (serviceNom, latitude, longitude, rayonKm = 10) =>
+  getProches: (serviceNom, latitude, longitude) =>
     connexion.get("/api/etablissements/proches", {
       params: {
         serviceNom,
         latitude,
         longitude,
-        rayonKm,
       },
     }),
 

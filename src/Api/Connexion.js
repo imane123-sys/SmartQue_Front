@@ -23,7 +23,7 @@ connexion.interceptors.request.use(
 
 connexion.interceptors.response.use(
   (response) => {
-    return response.data;
+    return response;
   },
   (error) => {
     let status = error.response?.status;
@@ -52,7 +52,7 @@ connexion.interceptors.response.use(
           break;
         case 500:
           console.error(
-            "[500 Internal Server Error]: Erreur du serveur HealthCare+.",
+            "[500 Internal Server Error]: Erreur du serveur SmartQueue.",
           );
           message = "Erreur interne du serveur. Veuillez réessayer plus tard.";
           break;

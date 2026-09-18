@@ -1,11 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Search, MapPin, Navigation, Clock, Users, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./SearchSection.css";
 import { etablissementApi } from "../../Api/Etablissement";
 
 export const SearchSection = () => {
-  etablissementApi.getProches();
+  const [serviceNom, setServiceNom] = useState("");
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSearch = async () => {
+    if (!serviceNom.trim()) return;
+
+    setLoading(true);
+    setError(null);
+    setVenues([]);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const response = await etablissementApi.getProches(
+            serviceNom.trim(),
+            latitude,
+            longitude,
+          );
+          setVenues(response.data);
+        } catch (err) {
+          setError(err.message || "Erreur lors de la recherche.");
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => {
+        setError(
+          "Veuillez autoriser la géolocalisation pour rechercher les établissements proches.",
+        );
+        setLoading(false);
+      },
+    );
+  };
 
   return (
     <section id="recherche" className="sq-search-section">
@@ -31,30 +66,42 @@ export const SearchSection = () => {
 
             <input
               type="text"
-              readOnly
+              value={serviceNom}
+              onChange={(e) => setServiceNom(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Exemple : Consultation, Banque, Administration..."
               className="sq-search-text-input"
             />
           </div>
 
           <div className="sq-search-actions">
-            <Link to="/register" className="sq-btn-geolocate">
+            <button
+              onClick={handleSearch}
+              disabled={loading}
+              className="sq-btn-geolocate"
+            >
               <Navigation size={15} />
-              <span>Explorer les guichets</span>
-            </Link>
+              <span>{loading ? "Recherche..." : "Explorer les guichets"}</span>
+            </button>
           </div>
         </div>
+
+        {error && (
+          <div className="sq-reg-alert sq-reg-alert-error">{error}</div>
+        )}
 
         <div className="sq-venues-results-grid">
           {venues.map((v) => (
             <div key={v.id} className="sq-venue-card">
               <div className="sq-vcard-top">
-                <span className="sq-vcard-service">{v.service}</span>
+                <span className="sq-vcard-service">{v.type}</span>
 
-                <span className="sq-vcard-distance">
-                  <Navigation size={11} />
-                  <span>{v.distanceKm}</span>
-                </span>
+                {v.distanceKm !== null && v.distanceKm !== undefined && (
+                  <span className="sq-vcard-distance">
+                    <Navigation size={11} />
+                    <span>{v.distanceKm.toFixed(1)} km</span>
+                  </span>
+                )}
               </div>
 
               <h3 className="sq-vcard-name">{v.nom}</h3>
@@ -71,7 +118,9 @@ export const SearchSection = () => {
                   <div>
                     <span className="sq-vcard-d-label">Attente estimée</span>
 
-                    <span className="sq-vcard-d-val">{v.attenteEstimee}</span>
+                    <span className="sq-vcard-d-val">
+                      {v.tempsAttenteEstimeMinutes} min
+                    </span>
                   </div>
                 </div>
 
@@ -82,16 +131,18 @@ export const SearchSection = () => {
                     <span className="sq-vcard-d-label">Dans la file</span>
 
                     <span className="sq-vcard-d-val">
-                      {v.personnesEnAttente} personnes
+                      {v.nombrePersonnesEnAttente} personnes
                     </span>
                   </div>
                 </div>
               </div>
 
               <div className="sq-vcard-footer">
-                <span className="sq-vcard-hours">Horaires : {v.horaires}</span>
+                <span className="sq-vcard-hours">
+                  Horaires : {v.horaireOuverture} - {v.horaireFermeture}
+                </span>
 
-                <Link to="/register" className="sq-vcard-btn-ticket">
+                <Link to="/prendre-ticket" className="sq-vcard-btn-ticket">
                   <Ticket size={14} />
                   <span>Prendre un ticket</span>
                 </Link>
