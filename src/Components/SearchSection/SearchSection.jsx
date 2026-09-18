@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Search, MapPin, Navigation, Clock, Users, Ticket } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./SearchSection.css";
 import { etablissementApi } from "../../Api/Etablissement";
 
@@ -9,6 +9,7 @@ export const SearchSection = () => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!serviceNom.trim()) return;
@@ -27,6 +28,7 @@ export const SearchSection = () => {
             longitude,
           );
           setVenues(response.data);
+          console.log(response.data);
         } catch (err) {
           setError(err.message || "Erreur lors de la recherche.");
         } finally {
@@ -40,6 +42,17 @@ export const SearchSection = () => {
         setLoading(false);
       },
     );
+  };
+  const handleServiceId = (idEtablissement) => {
+    const etablissement = venues.find((v) => v.id == idEtablissement);
+    console.log(etablissement);
+
+    const service = etablissement.services.find(
+      (e) => e.nom.toLowerCase() == serviceNom.toLowerCase(),
+    );
+    console.log(service);
+
+    navigate(`/reserver-ticket/${service.id}`);
   };
 
   return (
@@ -142,10 +155,13 @@ export const SearchSection = () => {
                   Horaires : {v.horaireOuverture} - {v.horaireFermeture}
                 </span>
 
-                <Link to="/prendre-ticket" className="sq-vcard-btn-ticket">
+                <button
+                  onClick={() => handleServiceId(v.id)}
+                  className="sq-vcard-btn-ticket"
+                >
                   <Ticket size={14} />
                   <span>Prendre un ticket</span>
-                </Link>
+                </button>
               </div>
             </div>
           ))}

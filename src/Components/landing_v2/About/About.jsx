@@ -74,7 +74,6 @@ export const About = () => {
   return (
     <section id="etablissements" className="sq-about-section">
       <div className="sq-container sq-about-grid">
-        
         <div className="sq-about-left">
           <div className="sq-about-img-box">
             <img
@@ -93,13 +92,11 @@ export const About = () => {
           </div>
         </div>
 
-        
         <div className="sq-about-right">
           <div className="sq-about-pretitle">{current.tagline}</div>
           <h2 className="sq-about-headline">{current.title}</h2>
           <p className="sq-about-desc">{current.description}</p>
 
-          
           <div className="sq-about-tabs">
             <button
               type="button"
@@ -117,7 +114,6 @@ export const About = () => {
             </button>
           </div>
 
-          
           <div className="sq-target-features-grid">
             {current.features.map((feat, i) => {
               const Icon = feat.icon;
@@ -135,7 +131,6 @@ export const About = () => {
             })}
           </div>
 
-          
           <div className="sq-about-buttons">
             <Link
               to={current.ctaLink}

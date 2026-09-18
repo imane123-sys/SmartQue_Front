@@ -9,6 +9,7 @@ import AuthGuard from "./Components/route_guard/AuthGuard";
 import { Tickets } from "lucide-react";
 import LandingV2 from "./Components/landing_v2/LandingV2";
 import SearchSection from "./Components/SearchSection/SearchSection";
+import ManagmentTicket from "./Components/tickets/ManagmentTicket";
 
 function App() {
   return (
@@ -17,7 +18,11 @@ function App() {
 
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<RegisterClient />} />
-      <Route path="/register-etablissement" element={<RegisterEtablissement />} />
+      <Route
+        path="/register-etablissement"
+        element={<RegisterEtablissement />}
+      />
+      <Route path="/reserver-ticket/:id" element={<ManagmentTicket />} />
       <Route path="/Etablissement-service" element={<SearchSection />} />
 
       <Route element={<AuthGuard role="ADMIN" />}></Route>
