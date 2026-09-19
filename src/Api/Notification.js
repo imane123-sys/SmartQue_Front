@@ -12,6 +12,9 @@ export const notificationApi = {
       },
     ),
 
+  notificationConfirmation: (idTicket) =>
+    connexion.post(`/api/notifications/confirmation/${idTicket}`),
+
   getByEtablissement: (idEtablissement, page = 0, size = 10) =>
     connexion.get(
       `/api/notifications/Notifications/tickets/Etablissemnt/${idEtablissement}`,
@@ -37,4 +40,3 @@ export const notificationApi = {
       },
     }),
 };
-
