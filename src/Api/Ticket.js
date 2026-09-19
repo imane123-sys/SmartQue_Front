@@ -1,14 +1,11 @@
 import connexion from "./Connexion";
 
 export const ticketApi = {
-  reserve: (data) =>
-    connexion.post("/api/tickets/reserve", data),
+  reserve: (data) => connexion.post("/api/tickets/reserve", data),
 
-  getById: (id) =>
-    connexion.get(`/api/tickets/${id}`),
+  getById: (id) => connexion.get(`/api/tickets/${id}`),
 
-  suivre: (id) =>
-    connexion.get(`/api/tickets/suivre/${id}`),
+  suivre: (id) => connexion.get(`/api/tickets/suivre/${id}`),
 
   getEnAttente: (statut, nomService) =>
     connexion.get("/api/tickets/attente", {
@@ -22,18 +19,15 @@ export const ticketApi = {
     id,
     statut = "EN_ATTENTE",
     page = 0,
-    size = 10
+    size = 10,
   ) =>
-    connexion.get(
-      `/api/tickets/ticketPaginated/Statut/etablissement/${id}`,
-      {
-        params: {
-          statut,
-          page,
-          size,
-        },
-      }
-    ),
+    connexion.get(`/api/tickets/ticketPaginated/Statut/etablissement/${id}`, {
+      params: {
+        statut,
+        page,
+        size,
+      },
+    }),
 
   annuler: (ticketId, clientId) =>
     connexion.put(`/api/tickets/annuler/${ticketId}`, null, {
@@ -51,6 +45,8 @@ export const ticketApi = {
         nouveauStatut,
       },
     }),
+  getTicketClient: (clientId) =>
+    connexion.get(`/api/tickets/client/${clientId}`),
 
   getHistorique: (idEtablissement) =>
     connexion.get(`/api/tickets/historique/${idEtablissement}`),

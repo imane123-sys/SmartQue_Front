@@ -10,6 +10,7 @@ import { Tickets } from "lucide-react";
 import LandingV2 from "./Components/landing_v2/LandingV2";
 import SearchSection from "./Components/SearchSection/SearchSection";
 import ManagmentTicket from "./Components/tickets/ManagmentTicket";
+import Dashboardclient from "./Components/clients/Dashboardclient";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       />
       <Route path="/reserver-ticket/:id" element={<ManagmentTicket />} />
       <Route path="/Etablissement-service" element={<SearchSection />} />
+      <Route path="/dashboard-client" element={<Dashboardclient />} />
 
       <Route element={<AuthGuard role="ADMIN" />}></Route>
 

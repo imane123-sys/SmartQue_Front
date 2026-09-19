@@ -9,6 +9,7 @@ export const SearchSection = () => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
   const navigate = useNavigate();
 
   const handleSearch = async () => {
@@ -102,8 +103,97 @@ export const SearchSection = () => {
         {error && (
           <div className="sq-reg-alert sq-reg-alert-error">{error}</div>
         )}
-
         <div className="sq-venues-results-grid">
+        {venues.length == 0&&(
+          <>
+          <div className="sq-venue-card">
+            <div className="sq-vcard-top">
+              <span className="sq-vcard-service">Hôpital</span>
+              <span className="sq-vcard-distance">
+                <Navigation size={11} />
+                <span>1.2 km</span>
+              </span>
+            </div>
+
+            <h3 className="sq-vcard-name">Hôpital de Béni Mellal</h3>
+
+            <p className="sq-vcard-address">
+              <MapPin size={12} className="sq-vcard-pin" />
+              <span>Béni Mellal, Maroc</span>
+            </p>
+
+            <div className="sq-vcard-details-row">
+              <div className="sq-vcard-detail">
+                <Clock size={13} className="sq-vcard-icon-blue" />
+                <div>
+                  <span className="sq-vcard-d-label">Attente estimée</span>
+                  <span className="sq-vcard-d-val">15 min</span>
+                </div>
+              </div>
+
+              <div className="sq-vcard-detail">
+                <Users size={13} className="sq-vcard-icon-amber" />
+                <div>
+                  <span className="sq-vcard-d-label">Dans la file</span>
+                  <span className="sq-vcard-d-val">8 personnes</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="sq-vcard-footer">
+              <span className="sq-vcard-hours">Horaires : 08:00 - 18:00</span>
+              <button className="sq-vcard-btn-ticket">
+                <Ticket size={14} />
+                <span>Prendre un ticket</span>
+              </button>
+            </div>
+          </div>
+          <div className="sq-venue-card">
+            <div className="sq-vcard-top">
+              <span className="sq-vcard-service">Banque</span>
+              <span className="sq-vcard-distance">
+                <Navigation size={11} />
+                <span>2.5 km</span>
+              </span>
+            </div>
+
+            <h3 className="sq-vcard-name">Banque Populaire</h3>
+
+            <p className="sq-vcard-address">
+              <MapPin size={12} className="sq-vcard-pin" />
+              <span>Centre-ville, Béni Mellal</span>
+            </p>
+
+            <div className="sq-vcard-details-row">
+              <div className="sq-vcard-detail">
+                <Clock size={13} className="sq-vcard-icon-blue" />
+                <div>
+                  <span className="sq-vcard-d-label">Attente estimée</span>
+                  <span className="sq-vcard-d-val">10 min</span>
+                </div>
+              </div>
+
+              <div className="sq-vcard-detail">
+                <Users size={13} className="sq-vcard-icon-amber" />
+                <div>
+                  <span className="sq-vcard-d-label">Dans la file</span>
+                  <span className="sq-vcard-d-val">5 personnes</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="sq-vcard-footer">
+              <span className="sq-vcard-hours">Horaires : 08:30 - 16:30</span>
+              <button className="sq-vcard-btn-ticket">
+                <Ticket size={14} />
+                <span>Prendre un ticket</span>
+              </button>
+            </div>
+       
+          </div>
+          </>
+           )}{" "}
+        
           {venues.map((v) => (
             <div key={v.id} className="sq-venue-card">
               <div className="sq-vcard-top">

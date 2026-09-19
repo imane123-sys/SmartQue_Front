@@ -4,6 +4,7 @@ import { useAuth } from "../AuthContext.jsx";
 import { useParams } from "react-router-dom";
 import "./ManagmentTicket.css";
 import { notificationApi } from "../../Api/Notification.js";
+import { Link } from "react-router-dom";
 
 function ManagmentTicket() {
   const [ticket, setTicket] = useState({});
@@ -481,6 +482,7 @@ function ManagmentTicket() {
           </div>
         </div>
       </div>
+      <Link to="/dashboard-client">Suivre mon ticket</Link>
     </div>
   );
 }
