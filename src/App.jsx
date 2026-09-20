@@ -11,6 +11,7 @@ import LandingV2 from "./Components/landing_v2/LandingV2";
 import SearchSection from "./Components/SearchSection/SearchSection";
 import ManagmentTicket from "./Components/tickets/ManagmentTicket";
 import Dashboardclient from "./Components/clients/Dashboardclient";
+import EtablissementDashboard from "./Components/etablissement/EtablissementDashboard";
 
 function App() {
   return (
@@ -26,6 +27,14 @@ function App() {
       <Route path="/reserver-ticket/:id" element={<ManagmentTicket />} />
       <Route path="/Etablissement-service" element={<SearchSection />} />
       <Route path="/dashboard-client" element={<Dashboardclient />} />
+      <Route
+        path="/dashboard-etablissement"
+        element={<EtablissementDashboard />}
+      />
+      <Route
+        path="/register-etablissement"
+        element={<RegisterEtablissement />}
+      />
 
       <Route element={<AuthGuard role="ADMIN" />}></Route>
 

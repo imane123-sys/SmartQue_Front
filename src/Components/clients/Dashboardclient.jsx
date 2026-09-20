@@ -15,18 +15,58 @@ import {
 import "./Dashboardclient.css";
 import { AuthContext, useAuth } from "../AuthContext";
 import { ticketApi } from "../../Api/Ticket";
+import { Link } from "react-router-dom";
 
 export default function Dashboardclient() {
   const { user } = useAuth();
   const [ticketClient, setTicketClient] = useState([]);
   const [erreur, setErreur] = useState("");
+  const [selectedTicket, setSelectedTicket] = useState();
 
   useEffect(() => {
+    // if (!user.id) {
+    //   return;
+    // }
     ticketApi
       .getTicketClient(user.id)
-      .then((res) => setTicketClient(res.data))
+      .then((res) => {
+        const tickets = Array.isArray(res.data) ? res.data : [];
+        setTicketClient(tickets);
+        if (tickets.length > 0) {
+          setSelectedTicket(tickets[0]);
+        }
+      })
+      .catch((err) => setErreur(err?.message || "Erreur de chargement"));
+  }, [user?.id]);
+  const annulerTicket = (idTicket) => {
+    ticketApi
+      .annuler(idTicket, user.id)
+      .then((res) => setSelectedTicket(res.data))
       .catch((err) => setErreur(err));
-  }, []);
+  };
+
+  function Countdown({ initialMinutes }) {
+    const [seconds, setSeconds] = useState(initialMinutes * 60);
+
+    useEffect(() => {
+      if (seconds <= 0) return;
+
+      const interval = setInterval(() => {
+        setSeconds((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, [seconds]);
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return (
+      <div>
+        {minutes}:{remainingSeconds.toString().padStart(2, "0")}
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard">
@@ -76,7 +116,7 @@ export default function Dashboardclient() {
           <div className="tickets-header">
             <div className="tickets-title">
               <h2>Mes tickets</h2>
-              <span>8</span>
+              <span>{ticketClient.length}</span>
             </div>
 
             <button className="plus-btn">
@@ -86,7 +126,11 @@ export default function Dashboardclient() {
 
           <div className="tickets-list">
             {ticketClient.map((t) => (
-              <div className="ticket-item" key={t.id}>
+              <div
+                className="ticket-item"
+                key={t.id}
+                onClick={() => setSelectedTicket(t)}
+              >
                 <div className="ticket-top">
                   <span>{t.statut}</span>
                 </div>
@@ -110,32 +154,47 @@ export default function Dashboardclient() {
             <h2>Temps resté</h2>
 
             <div className="ticket-card">
-              <div className="big-ticket-number">8123</div>
+              <div className="big-ticket-number">{selectedTicket?.numero}</div>
 
               <div className="ticket-information">
-                <div className="ticket-number">8123</div>
+                <div className="ticket-number">{selectedTicket?.numero}</div>
 
                 <div className="ticket-stats">
                   <div className="stat">
                     <span>Temps d'estimation</span>
-                    <strong>20 min</strong>
+                    <strong>{selectedTicket?.tempsEstime}</strong>
                   </div>
 
                   <div className="stat">
                     <span>Votre position</span>
 
                     <strong>
-                      <b>1</b> personne devant vous
+                      <b>{selectedTicket?.position}</b> personne devant vous
+                    </strong>
+                  </div>
+                  <div className="stat">
+                    <span>Statut ticket</span>
+
+                    <strong>
+                      <b>{selectedTicket?.statut}</b>
                     </strong>
                   </div>
                 </div>
 
-                <div className="countdown">00:00:34</div>
+                <div className="countdown">
+                  <Countdown
+                    initialMinutes={selectedTicket?.tempsEstime || 1}
+                  />
+                  min
+                </div>
 
-                <button className="download-btn">
+                <Link
+                  to={`/reserver-ticket/${selectedTicket?.id}`}
+                  className="download-btn"
+                >
                   <Download size={16} />
-                  Voir & Télécharger mon Ticket
-                </button>
+                  Voir mon Ticket
+                </Link>
               </div>
             </div>
 
@@ -172,7 +231,10 @@ export default function Dashboardclient() {
             </div>
 
             <div className="cancel-area">
-              <button className="cancel-btn">
+              <button
+                className="cancel-btn"
+                onClick={() => annulerTicket(selectedTicket.id, user.id)}
+              >
                 <CircleX size={16} />
                 Annuler le ticket
               </button>

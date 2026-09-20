@@ -9,23 +9,15 @@ import { Link } from "react-router-dom";
 function ManagmentTicket() {
   const [ticket, setTicket] = useState({});
   const [erreur, setErreur] = useState(null);
-  const [message, setMessage] = useState("");
 
   const { user } = useAuth();
   const { id } = useParams();
-
   useEffect(() => {
     ticketApi
-      .reserve({ clientEmail: user.email, serviceId: id })
-      .then((res) => {
-        setTicket(res.data);
-        notificationApi
-          .notificationConfirmation(res.data.id)
-          .then((res) => setMessage(res))
-          .catch((err) => setErreur(err));
-      })
+      .getById(id)
+      .then((res) => setTicket(res.data))
       .catch((err) => setErreur(err));
-  }, [user, id]);
+  }, []);
 
   return (
     <div className="sq-ticket-page">
@@ -482,7 +474,7 @@ function ManagmentTicket() {
           </div>
         </div>
       </div>
-      <Link to="/dashboard-client">Suivre mon ticket</Link>
+      <Link to="/dashboard-client">Retour en arrière</Link>
     </div>
   );
 }

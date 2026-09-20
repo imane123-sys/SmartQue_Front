@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Ticket, ChevronRight, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { useAuth } from "../../AuthContext";
 
 export const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="sq-navbar-header">
@@ -98,8 +100,9 @@ export const Navbar = () => {
         >
           Se connecter
         </Link>
+
         <Link
-          to="/register"
+          to={!isAuthenticated ? "/register" : "/Etablissement-service"}
           onClick={() => setMobileOpen(false)}
           className="sq-btn-primary"
           style={{ justifyContent: "center", width: "100%" }}
