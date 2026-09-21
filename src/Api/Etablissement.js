@@ -32,10 +32,13 @@ export const etablissementApi = {
       },
     }),
   getTicketsEtablissement: (idEtablissement, page = 0, size = 10) =>
-    connexion.get(`/api/tickets/etablissement/${idEtablissement}`, {
-      params: {
-        page,
-        size,
+    connexion.get(
+      `/api/etablissements/ticket/etablissement/${idEtablissement}`,
+      {
+        params: {
+          page,
+          size,
+        },
       },
-    }),
+    ),
 };

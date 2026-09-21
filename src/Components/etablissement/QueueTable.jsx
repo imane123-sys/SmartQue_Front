@@ -1,25 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { etablissementApi } from "../../Api/Etablissement";
+import { useEtablissement } from "./EtablissementContext";
 
 export default function QueueTable() {
-  const { user } = useAuth();
-  const [ticketEtablissement, setTicketEtablissement] = useState([]);
-  const [erreur, setErreur] = useState("");
-  const handleTicketsEtablissement = () => {
-    if (!user) return;
+  const { ticketEtablissement } = useEtablissement();
 
-    etablissementApi
-      .getTicketsEtablissement(user.id)
-      .then((res) => {
-        setTicketEtablissement(res.data.content);
-        console.log(res.data);
-      })
-      .catch((err) => setErreur(err));
-  };
-  useEffect(() => {
-    handleTicketsEtablissement();
-  }, [user?.id]);
+  useEffect(() => {});
   return (
     <div className="table-card">
       <div className="table-wrapper">
@@ -36,6 +23,7 @@ export default function QueueTable() {
               <th>nom de l'établissement</th>
               <th>Temps Estimé</th>
               <th>status</th>
+              <th>Date de création</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
@@ -53,8 +41,10 @@ export default function QueueTable() {
 
                 <td>{t.nomClient}</td>
                 <td>{t.nomService}</td>
+                <td>{t.nomEtablissement}</td>
                 <td>{t.tempsEstime}</td>
                 <td>{t.statut}</td>
+                <td>{t.dateCreation}</td>
 
                 <td className="actions-cell">
                   <button className="table-action">Call</button>

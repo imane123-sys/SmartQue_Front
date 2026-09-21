@@ -7,6 +7,7 @@ import App from "./App";
 import theme from "./theme";
 import { AuthProvider } from "./Components/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import EtablissementProvider from "./Components/etablissement/EtablissementContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <CssBaseline />
       <AuthProvider>
         <BrowserRouter>
-          <App />
+          <EtablissementProvider>
+            <App />
+          </EtablissementProvider>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
