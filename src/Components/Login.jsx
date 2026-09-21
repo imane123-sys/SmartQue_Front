@@ -12,8 +12,9 @@ import {
   EyeOff,
   ArrowRight,
 } from "lucide-react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext, useAuth } from "./AuthContext";
 import "../css/RegisterClient.css";
+
 
 const loginSchema = yup.object({
   email: yup
@@ -33,6 +34,7 @@ function Login({ onNavigateRegister }) {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const { user } = useAuth();
 
   const {
     register,
@@ -52,19 +54,27 @@ function Login({ onNavigateRegister }) {
     setSuccessMessage(null);
 
     try {
-      const response = await login(data);
+      const userData = await login(data);
 
-      if (response?.token) {
-        localStorage.setItem("token", response.token);
+      if (!userData) {
+        setApiError("Identifiants invalides ou erreur serveur.");
+        return;
       }
-      if (response?.user) {
-        localStorage.setItem("user", JSON.stringify(response.user));
-      }
+
+      const userRole = userData.role;
+
+      console.log(userRole);
+      
 
       setSuccessMessage("Connexion réussie ! Redirection en cours...");
       reset();
+
       setTimeout(() => {
-        navigate("/Etablissement-service");
+        if (userRole === "ETABLISSEMENT") {
+          navigate("/dashboard-etablissement");
+        } else {
+          navigate("/Etablissement-service");
+        }
       }, 700);
     } catch (err) {
       setApiError(

@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../AuthContext";
+import { etablissementApi } from "../../Api/Etablissement";
 
 export default function QueueTable() {
+  const { user } = useAuth();
+  const [ticketEtablissement, setTicketEtablissement] = useState([]);
+  const [erreur, setErreur] = useState("");
+  const handleTicketsEtablissement = () => {
+    if (!user) return;
+
+    etablissementApi
+      .getTicketsEtablissement(user.id)
+      .then((res) => {
+        setTicketEtablissement(res.data.content);
+        console.log(res.data);
+      })
+      .catch((err) => setErreur(err));
+  };
+  useEffect(() => {
+    handleTicketsEtablissement();
+  }, [user?.id]);
   return (
     <div className="table-card">
       <div className="table-wrapper">
@@ -11,108 +30,37 @@ export default function QueueTable() {
                 <input type="checkbox" />
               </th>
 
-              <th>Ticket ID</th>
-              <th>Visitor Name</th>
-              <th>Service</th>
-              <th>Joined At</th>
-              <th>Wait Time</th>
-              <th>Status</th>
+              <th>Numéro Ticket</th>
+              <th>Nom du client</th>
+              <th>nom de service</th>
+              <th>nom de l'établissement</th>
+              <th>Temps Estimé</th>
+              <th>status</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td>
-                <input type="checkbox" />
-              </td>
+            {ticketEtablissement.map((t) => (
+              <tr key={t.id}>
+                <td>
+                  <input type="checkbox" />
+                </td>
 
-              <td>
-                <span className="ticket-id">A-027</span>
-              </td>
+                <td>
+                  <span className="ticket-id">{t.numero}</span>
+                </td>
 
-              <td>Marie Dupont</td>
-              <td>General Consultation</td>
-              <td>10:42</td>
-              <td>14 min</td>
+                <td>{t.nomClient}</td>
+                <td>{t.nomService}</td>
+                <td>{t.tempsEstime}</td>
+                <td>{t.statut}</td>
 
-              <td>
-                <span className="status waiting">Waiting</span>
-              </td>
-
-              <td className="actions-cell">
-                <button className="table-action">Call</button>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <input type="checkbox" />
-              </td>
-
-              <td>
-                <span className="ticket-id">A-028</span>
-              </td>
-
-              <td>Jean Martin</td>
-              <td>Blood Sample</td>
-              <td>10:48</td>
-              <td>8 min</td>
-
-              <td>
-                <span className="status waiting">Waiting</span>
-              </td>
-
-              <td className="actions-cell">
-                <button className="table-action">Call</button>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <input type="checkbox" />
-              </td>
-
-              <td>
-                <span className="ticket-id">A-029</span>
-              </td>
-
-              <td>Sophie Bernard</td>
-              <td>Pediatrics</td>
-              <td>10:51</td>
-              <td>5 min</td>
-
-              <td>
-                <span className="status waiting">Waiting</span>
-              </td>
-
-              <td className="actions-cell">
-                <button className="table-action">Call</button>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <input type="checkbox" />
-              </td>
-
-              <td>
-                <span className="ticket-id">A-030</span>
-              </td>
-
-              <td>Lucas Morel</td>
-              <td>General Consultation</td>
-              <td>10:54</td>
-              <td>2 min</td>
-
-              <td>
-                <span className="status waiting">Waiting</span>
-              </td>
-
-              <td className="actions-cell">
-                <button className="table-action">Call</button>
-              </td>
-            </tr>
+                <td className="actions-cell">
+                  <button className="table-action">Call</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

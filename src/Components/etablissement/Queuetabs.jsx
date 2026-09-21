@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import QueueTable from "./QueueTable";
 import Counters from "./Counters";
 import Analytics from "./Analytics";
-
+import { etablissementApi } from "../../Api/Etablissement";
 export default function Queuetabs() {
   return (
     <div className="tabs-section">

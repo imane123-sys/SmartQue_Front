@@ -35,7 +35,11 @@ export function AuthProvider({ children }) {
 
       const token = response.data.token;
 
+      console.log(" Full login response data:", response.data);
+
       const decoded = jwtDecode(token);
+
+      console.log(" JWT decoded payload:", decoded);
 
       const userData = {
         id: decoded.id,
@@ -48,7 +52,7 @@ export function AuthProvider({ children }) {
       setToken(token);
       setUser(userData);
 
-      return true;
+      return userData;
     } catch (error) {
       setError("Email ou mot de passe incorrect");
       return false;
