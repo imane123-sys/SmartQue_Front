@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { etablissementApi } from "../../Api/Etablissement";
+import { serviceApi } from "../../Api/Service";
 
 export const EtablissementContext = createContext();
 
@@ -15,6 +16,7 @@ export default function EtablissementProvider({ children }) {
   const [erreur, setErreur] = useState("");
   const [ticketEnCours, setTicketEnCours] = useState([]);
   const [TicketEnAttente, setTicketEnAttente] = useState([]);
+  const [servicesEtablissement, setServicesEtablissement] = useState([]);
 
   const handleTicketsEtablissement = () => {
     if (!user) return;
@@ -29,9 +31,20 @@ export default function EtablissementProvider({ children }) {
         setErreur(err);
       });
   };
+  const handleServicesEtablissement = () => {
+    if (!user) return;
+
+    serviceApi
+      .getAllServicesByEtablissemntId(user.id)
+      .then((res) => setServicesEtablissement(res.data))
+      .catch((err) => {
+        setErreur(err);
+      });
+  };
 
   useEffect(() => {
     handleTicketsEtablissement();
+    handleServicesEtablissement();
   }, [user]);
 
   useEffect(() => {
@@ -51,6 +64,8 @@ export default function EtablissementProvider({ children }) {
         erreur,
         TicketEnAttente,
         handleTicketsEtablissement,
+        handleServicesEtablissement,
+        servicesEtablissement,
       }}
     >
       {children}

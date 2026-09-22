@@ -12,6 +12,7 @@ import SearchSection from "./Components/SearchSection/SearchSection";
 import ManagmentTicket from "./Components/tickets/ManagmentTicket";
 import Dashboardclient from "./Components/clients/Dashboardclient";
 import EtablissementDashboard from "./Components/etablissement/EtablissementDashboard";
+import TableServiceEtablissement from "./Components/etablissement/TableServiceEtablissement";
 
 function App() {
   return (
@@ -34,6 +35,10 @@ function App() {
       <Route
         path="/register-etablissement"
         element={<RegisterEtablissement />}
+      />
+      <Route
+        path="/service-etablissement"
+        element={<TableServiceEtablissement />}
       />
 
       <Route element={<AuthGuard role="ADMIN" />}></Route>

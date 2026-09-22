@@ -14,19 +14,16 @@ export default function NowServing() {
       .updateStatut(idTicket, "TERMINE")
       .then((res) => {
         setTicketUpdated(res.data);
+
+        return ticketApi.updateStatut(TicketEnAttente[0].id, "EN_COURS");
       })
-      .catch((err) => {
-        setErreur(err);
-      });
-    ticketApi
-      .updateStatut(TicketEnAttente[0].id, "EN_COURS")
       .then((res) => {
         setTicketUpdated(res.data);
+        return handleTicketsEtablissement();
       })
-      .then(() => handleTicketsEtablissement())
       .catch((err) => {
         setErreur(err);
-        console.log(erreur);
+        console.log(err);
       });
   };
 

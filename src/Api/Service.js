@@ -1,8 +1,9 @@
 import connexion from "./Connexion";
 
 export const serviceApi = {
-  getAll: () =>
-    connexion.get("/api/services"),
+  getAll: () => connexion.get("/api/services"),
+  getAllServicesByEtablissemntId: (idEtablissement) =>
+    connexion.get(`api/services/etablissement/${idEtablissement}`),
 
   getByEtablissement: (id) =>
     connexion.get("/api/services/etablissement", {
@@ -19,8 +20,7 @@ export const serviceApi = {
       },
     }),
 
-  create: (data) =>
-    connexion.post("/api/services/create", data),
+  create: (data) => connexion.post("/api/services/create", data),
 
   update: (id, data) =>
     connexion.put("/api/services/update", data, {
