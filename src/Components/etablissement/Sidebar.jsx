@@ -77,9 +77,9 @@ export default function Sidebar() {
           <button>Tickets</button>
         </div>
 
-        <Link to="/Etablissement-service">
+        <Link to="/services-etablissement">
           <button>
-            
+            <BriefcaseBusiness size={18} />
             <span>Services</span>
           </button>
         </Link>

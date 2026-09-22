@@ -23,7 +23,8 @@ const PageHeader = () => {
 
   const [createdService, setCreatedService] = useState({});
   const [erreur, setErreur] = useState("");
-  const { servicesEtablissement } = useEtablissement();
+  const { servicesEtablissement, handleServicesEtablissement } =
+    useEtablissement();
 
   const {
     register,
@@ -46,7 +47,7 @@ const PageHeader = () => {
       .create(service)
       .then((res) => {
         setCreatedService(res.data);
-        console.log(createdService);
+        handleServicesEtablissement();
 
         reset();
       })

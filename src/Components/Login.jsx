@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Await } from "react-router-dom";
 import {
   Ticket,
   ArrowLeft,
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { AuthContext, useAuth } from "./AuthContext";
 import "../css/RegisterClient.css";
-
+import { ticketApi } from "../Api/Ticket";
 
 const loginSchema = yup.object({
   email: yup
@@ -34,7 +34,15 @@ function Login({ onNavigateRegister }) {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [ticketClient, setTicketClient] = useState([]);
+  const [erreur, setErreur] = useState("");
   const { user } = useAuth();
+  const handleTicketClients = () => {
+    ticketApi
+      .getTicketClient(user.id)
+      .then((res) => setTicketClient(res.data))
+      .catch((err) => setErreur(err));
+  };
 
   const {
     register,
@@ -63,15 +71,17 @@ function Login({ onNavigateRegister }) {
 
       const userRole = userData.role;
 
-      console.log(userRole);
-      
-
       setSuccessMessage("Connexion réussie ! Redirection en cours...");
       reset();
+      await handleTicketClients();
+      await console.log(ticketClient);
+      
 
       setTimeout(() => {
         if (userRole === "ETABLISSEMENT") {
           navigate("/dashboard-etablissement");
+        } else if (user.role === "CLIENT" && ticketClient.length > 0) {
+          navigate("/dashboard-client");
         } else {
           navigate("/Etablissement-service");
         }

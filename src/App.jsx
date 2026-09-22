@@ -37,7 +37,7 @@ function App() {
         element={<RegisterEtablissement />}
       />
       <Route
-        path="/service-etablissement"
+        path="/services-etablissement"
         element={<TableServiceEtablissement />}
       />
 
