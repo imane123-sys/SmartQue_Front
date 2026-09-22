@@ -13,7 +13,7 @@ import ManagmentTicket from "./Components/tickets/ManagmentTicket";
 import Dashboardclient from "./Components/clients/Dashboardclient";
 import EtablissementDashboard from "./Components/etablissement/EtablissementDashboard";
 import TableServiceEtablissement from "./Components/etablissement/TableServiceEtablissement";
-
+import AdminDashboard from "./Components/admin/AdminDashboard";
 function App() {
   return (
     <Routes>
@@ -41,7 +41,9 @@ function App() {
         element={<TableServiceEtablissement />}
       />
 
-      <Route element={<AuthGuard role="ADMIN" />}></Route>
+      <Route element={<AuthGuard role="ADMIN" />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Route>
 
       <Route path="/clients" element={<Clients />} />
       <Route path="/services" element={<Services />} />

@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate, Link, Await } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Ticket,
   ArrowLeft,
@@ -12,7 +12,7 @@ import {
   EyeOff,
   ArrowRight,
 } from "lucide-react";
-import { AuthContext, useAuth } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 import "../css/RegisterClient.css";
 import { ticketApi } from "../Api/Ticket";
 
@@ -29,20 +29,12 @@ const loginSchema = yup.object({
 });
 
 function Login({ onNavigateRegister }) {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [ticketClient, setTicketClient] = useState([]);
-  const [erreur, setErreur] = useState("");
-  const { user } = useAuth();
-  const handleTicketClients = () => {
-    ticketApi
-      .getTicketClient(user.id)
-      .then((res) => setTicketClient(res.data))
-      .catch((err) => setErreur(err));
-  };
 
   const {
     register,
@@ -71,21 +63,32 @@ function Login({ onNavigateRegister }) {
 
       const userRole = userData.role;
 
-      setSuccessMessage("Connexion réussie ! Redirection en cours...");
-      reset();
-      await handleTicketClients();
-      await console.log(ticketClient);
-      
+      setSuccessMessage("Connexion réussie !");
 
-      setTimeout(() => {
-        if (userRole === "ETABLISSEMENT") {
-          navigate("/dashboard-etablissement");
-        } else if (user.role === "CLIENT" && ticketClient.length > 0) {
+      reset();
+
+      if (userRole === "ADMIN") {
+        navigate("/admin");
+        return;
+      }
+      if (userRole === "ETABLISSEMENT") {
+        navigate("/dashboard-etablissement");
+        return;
+      }
+
+      if (userRole === "CLIENT") {
+        const res = await ticketApi.getTicketClient(userData.id);
+
+        if (res.data && res.data.length > 0) {
           navigate("/dashboard-client");
         } else {
           navigate("/Etablissement-service");
         }
-      }, 700);
+
+        return;
+      }
+
+      navigate("/Etablissement-service");
     } catch (err) {
       setApiError(
         err?.response?.data?.message ||
@@ -103,6 +106,7 @@ function Login({ onNavigateRegister }) {
             <div className="sq-reg-logo-icon">
               <Ticket size={21} strokeWidth={2.4} />
             </div>
+
             <span className="sq-reg-logo-brand">SmartQueue</span>
           </Link>
 
@@ -118,6 +122,7 @@ function Login({ onNavigateRegister }) {
         </div>
 
         <h1 className="sq-reg-title">Bienvenue</h1>
+
         <p className="sq-reg-subtitle">
           Connectez-vous à votre espace SmartQueue.
         </p>
@@ -125,6 +130,7 @@ function Login({ onNavigateRegister }) {
         {apiError && (
           <div className="sq-reg-alert sq-reg-alert-error">{apiError}</div>
         )}
+
         {successMessage && (
           <div className="sq-reg-alert sq-reg-alert-success">
             {successMessage}
@@ -136,8 +142,10 @@ function Login({ onNavigateRegister }) {
             <label htmlFor="login-email" className="sq-reg-label">
               Email
             </label>
+
             <div className={`sq-reg-input-wrap ${errors.email ? "error" : ""}`}>
               <Mail size={16} className="sq-input-icon" />
+
               <input
                 id="login-email"
                 type="email"
@@ -146,6 +154,7 @@ function Login({ onNavigateRegister }) {
                 className="sq-reg-input"
               />
             </div>
+
             {errors.email && (
               <span className="sq-reg-err-msg">{errors.email.message}</span>
             )}
@@ -155,10 +164,12 @@ function Login({ onNavigateRegister }) {
             <label htmlFor="login-password" className="sq-reg-label">
               Mot de passe
             </label>
+
             <div
               className={`sq-reg-input-wrap ${errors.password ? "error" : ""}`}
             >
               <Lock size={16} className="sq-input-icon" />
+
               <input
                 id="login-password"
                 type={showPassword ? "text" : "password"}
@@ -166,6 +177,7 @@ function Login({ onNavigateRegister }) {
                 {...register("password")}
                 className="sq-reg-input"
               />
+
               <button
                 type="button"
                 className="sq-eye-btn"
@@ -179,6 +191,7 @@ function Login({ onNavigateRegister }) {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+
             {errors.password && (
               <span className="sq-reg-err-msg">{errors.password.message}</span>
             )}
@@ -192,6 +205,7 @@ function Login({ onNavigateRegister }) {
             <span>
               {isSubmitting ? "Connexion en cours..." : "Se connecter"}
             </span>
+
             <ArrowRight size={16} strokeWidth={2.4} />
           </button>
         </form>

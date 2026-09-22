@@ -718,6 +718,7 @@ a {
     background: #cbd5e1;
 
     z-index: 0;
+    overflow: hidden;
 }
 
 .step {
@@ -747,6 +748,7 @@ a {
     background: white;
 
     font-size: 14px;
+    transition: all 0.3s ease;
 }
 
 .waiting {
@@ -780,10 +782,16 @@ a {
     color: #64748b;
 
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .step .current-text {
     color: #059669;
+    font-weight: 700;
+}
+
+.step .cancelled-text {
+    color: #dc2626;
     font-weight: 700;
 }
 
@@ -944,5 +952,25 @@ a {
         justify-content: center;
     }
 
+}
+
+.status-waiting {
+  color: #64748b;
+}
+
+.status-progress {
+  color: #00a878;
+}
+
+.status-done {
+  color: #16a34a;
+}
+
+.status-cancelled {
+  color: #dc2626;
+}
+
+.step-circle.active {
+  transform: scale(1.05);
 }
 

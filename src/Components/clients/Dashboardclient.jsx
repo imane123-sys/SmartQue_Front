@@ -22,6 +22,20 @@ export default function Dashboardclient() {
   const [ticketClient, setTicketClient] = useState([]);
   const [erreur, setErreur] = useState("");
   const [selectedTicket, setSelectedTicket] = useState();
+  const statutNormalized = selectedTicket?.statut
+    ? String(selectedTicket.statut)
+        .trim()
+        .toUpperCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[\s-]/g, "_")
+    : "";
+
+  const isEnAttente = statutNormalized === "EN_ATTENTE";
+  const isEnCours = statutNormalized === "EN_COURS";
+  const isTermine = statutNormalized === "TERMINE";
+  const isAnnule =
+    statutNormalized === "ANNULE" || statutNormalized === "ABSENT";
 
   useEffect(() => {
     // if (!user.id) {
@@ -199,34 +213,83 @@ export default function Dashboardclient() {
             </div>
 
             <div className="stepper">
-              <div className="step-line"></div>
+              <div className="step-line">
+                <div
+                  style={{
+                    height: "100%",
+                    width: isEnCours
+                      ? "33.33%"
+                      : isTermine
+                      ? "66.66%"
+                      : "0%",
+                    backgroundColor: "#10b981",
+                    transition: "width 0.4s ease",
+                  }}
+                />
+              </div>
 
+              
               <div className="step">
-                <div className="step-circle waiting">
+                <div
+                  className={`step-circle ${
+                    isEnAttente
+                      ? "current"
+                      : isEnCours || isTermine
+                      ? "done"
+                      : "waiting"
+                  }`}
+                >
                   <Clock size={16} />
                 </div>
-                <span>En attente</span>
+                <span className={isEnAttente ? "current-text" : ""}>
+                  En attente
+                </span>
               </div>
 
+              
               <div className="step">
-                <div className="step-circle current">
+                <div
+                  className={`step-circle ${
+                    isEnCours
+                      ? "current"
+                      : isTermine
+                      ? "done"
+                      : "waiting"
+                  }`}
+                >
                   <UserCheck size={16} />
                 </div>
-                <span className="current-text">En cours</span>
+                <span className={isEnCours ? "current-text" : ""}>
+                  En cours
+                </span>
               </div>
 
+              
               <div className="step">
-                <div className="step-circle done">
+                <div
+                  className={`step-circle ${
+                    isTermine ? "current" : "waiting"
+                  }`}
+                >
                   <Check size={16} />
                 </div>
-                <span>Terminé</span>
+                <span className={isTermine ? "current-text" : ""}>
+                  Terminé
+                </span>
               </div>
 
+              
               <div className="step">
-                <div className="step-circle cancelled-step">
+                <div
+                  className={`step-circle ${
+                    isAnnule ? "cancelled-step" : "waiting"
+                  }`}
+                >
                   <X size={16} />
                 </div>
-                <span>Annulé</span>
+                <span className={isAnnule ? "cancelled-text" : ""}>
+                  Annulé
+                </span>
               </div>
             </div>
 
@@ -245,3 +308,4 @@ export default function Dashboardclient() {
     </div>
   );
 }
+
