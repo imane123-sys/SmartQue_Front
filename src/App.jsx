@@ -48,7 +48,7 @@ function App() {
       <Route path="/clients" element={<Clients />} />
       <Route path="/services" element={<Services />} />
       <Route path="/tickets" element={Tickets} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
