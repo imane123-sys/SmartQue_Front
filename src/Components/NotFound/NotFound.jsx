@@ -18,7 +18,6 @@ export default function NotFound() {
           <span className="digit four-second">4</span>
         </div>
 
-        
         <h1 className="error-title">Désolé, page introuvable...</h1>
         <p className="error-description">
           Nous avons tenté de la retrouver, mais il semble qu'elle ait manqué
@@ -27,12 +26,10 @@ export default function NotFound() {
           navigation.
         </p>
 
-        
         <button className="back-home-btn" onClick={handleGoHome}>
           <span className="btn-arrow">←</span> Retour à l'accueil
         </button>
 
-        
         <svg
           className="wave-lines"
           viewBox="0 0 1000 300"

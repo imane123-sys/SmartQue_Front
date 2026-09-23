@@ -1,6 +1,6 @@
 
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap");
 
 
 .sq-ticket-page {
@@ -11,11 +11,25 @@
   align-items: center;
   justify-content: center;
   padding: 16px 12px;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(224, 238, 255, 0.75) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(240, 230, 220, 0.6) 0%, transparent 40%),
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(224, 238, 255, 0.75) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(240, 230, 220, 0.6) 0%,
+      transparent 40%
+    ),
     linear-gradient(135deg, #f2f4f8 0%, #e6ecf4 50%, #ede8e3 100%);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    "Plus Jakarta Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   color: #0f172a;
 }
 
@@ -25,7 +39,7 @@
   max-width: 405px;
   background: #ffffff;
   border-radius: 26px;
-  box-shadow: 
+  box-shadow:
     0 20px 48px -10px rgba(0, 35, 95, 0.16),
     0 8px 20px -4px rgba(0, 0, 0, 0.07),
     0 0 0 1px rgba(255, 255, 255, 0.8) inset;
@@ -87,7 +101,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 
+  box-shadow:
     0 3px 12px rgba(2, 132, 199, 0.4),
     0 0 0 1.5px rgba(255, 255, 255, 0.35) inset;
   flex-shrink: 0;
@@ -121,7 +135,7 @@
 
 
 .sq-header-cursive {
-  font-family: 'Caveat', cursive;
+  font-family: "Caveat", cursive;
   color: #bae6fd;
   font-size: 17px;
   line-height: 1.05;
@@ -204,7 +218,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 
+  box-shadow:
     0 2px 5px rgba(0, 56, 130, 0.03),
     0 0 0 1px rgba(255, 255, 255, 0.9) inset;
 }
@@ -445,7 +459,7 @@
   padding: 10px;
   background: #ffffff;
   border-radius: 18px;
-  box-shadow: 
+  box-shadow:
     0 3px 14px rgba(0, 0, 0, 0.04),
     0 1px 3px rgba(0, 0, 0, 0.02);
   display: inline-flex;
@@ -528,6 +542,29 @@
   line-height: 0;
   z-index: 1;
 }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.back-link:hover {
+  color: #1d4ed8;
+  transform: translateX(-3px);
+}
+
+.back-link svg {
+  transition: 0.2s;
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
 
 .sq-footer-wave-svg svg {
   display: block;
@@ -573,7 +610,7 @@
 }
 
 .sq-footer-right {
-  font-family: 'Caveat', cursive;
+  font-family: "Caveat", cursive;
   color: #ffffff;
   font-size: 17px;
   line-height: 1.05;

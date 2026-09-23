@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import "./ManagmentTicket.css";
 import { notificationApi } from "../../Api/Notification.js";
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 function ManagmentTicket() {
   const [ticket, setTicket] = useState({});
@@ -21,10 +22,12 @@ function ManagmentTicket() {
 
   return (
     <div className="sq-ticket-page">
+      <Link to="/dashboard-client" className="back-link">
+        <ArrowLeft size={20} />
+        Retour en arrière
+      </Link>
       <div className="sq-ticket-card">
-        
         <div className="sq-ticket-hero-header">
-          
           <div
             className="sq-zellige-watermark sq-zellige-top"
             aria-hidden="true"
@@ -474,7 +477,6 @@ function ManagmentTicket() {
           </div>
         </div>
       </div>
-      <Link to="/dashboard-client">Retour en arrière</Link>
     </div>
   );
 }

@@ -22,6 +22,8 @@ export default function Dashboardclient() {
   const [ticketClient, setTicketClient] = useState([]);
   const [erreur, setErreur] = useState("");
   const [selectedTicket, setSelectedTicket] = useState();
+  const [refresh, setRefresh] = useState(false);
+
   const statutNormalized = selectedTicket?.statut
     ? String(selectedTicket.statut)
         .trim()
@@ -30,6 +32,10 @@ export default function Dashboardclient() {
         .replace(/[\u0300-\u036f]/g, "")
         .replace(/[\s-]/g, "_")
     : "";
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   const isEnAttente = statutNormalized === "EN_ATTENTE";
   const isEnCours = statutNormalized === "EN_COURS";
@@ -59,18 +65,28 @@ export default function Dashboardclient() {
       .catch((err) => setErreur(err));
   };
 
-  function Countdown({ initialMinutes }) {
+  function Countdown({ initialMinutes, idTicket }) {
     const [seconds, setSeconds] = useState(initialMinutes * 60);
 
     useEffect(() => {
       if (seconds <= 0) return;
 
       const interval = setInterval(() => {
-        setSeconds((prev) => prev - 1);
+        setSeconds((prev) => {
+          const newSeconds = prev - 1;
+
+          if (newSeconds % 60 === 0) {
+            const newMinutes = newSeconds / 60;
+
+            ticketApi.updateTempsEstime(idTicket, newMinutes);
+          }
+
+          return newSeconds;
+        });
       }, 1000);
 
       return () => clearInterval(interval);
-    }, [seconds]);
+    }, [seconds, idTicket, refresh]);
 
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -198,6 +214,7 @@ export default function Dashboardclient() {
                 <div className="countdown">
                   <Countdown
                     initialMinutes={selectedTicket?.tempsEstime || 1}
+                    idTicket={selectedTicket?.id}
                   />
                   min
                 </div>
@@ -217,11 +234,7 @@ export default function Dashboardclient() {
                 <div
                   style={{
                     height: "100%",
-                    width: isEnCours
-                      ? "33.33%"
-                      : isTermine
-                      ? "66.66%"
-                      : "0%",
+                    width: isEnCours ? "33.33%" : isTermine ? "66.66%" : "0%",
                     backgroundColor: "#10b981",
                     transition: "width 0.4s ease",
                   }}
@@ -235,8 +248,8 @@ export default function Dashboardclient() {
                     isEnAttente
                       ? "current"
                       : isEnCours || isTermine
-                      ? "done"
-                      : "waiting"
+                        ? "done"
+                        : "waiting"
                   }`}
                 >
                   <Clock size={16} />
@@ -250,11 +263,7 @@ export default function Dashboardclient() {
               <div className="step">
                 <div
                   className={`step-circle ${
-                    isEnCours
-                      ? "current"
-                      : isTermine
-                      ? "done"
-                      : "waiting"
+                    isEnCours ? "current" : isTermine ? "done" : "waiting"
                   }`}
                 >
                   <UserCheck size={16} />
@@ -267,15 +276,11 @@ export default function Dashboardclient() {
               
               <div className="step">
                 <div
-                  className={`step-circle ${
-                    isTermine ? "current" : "waiting"
-                  }`}
+                  className={`step-circle ${isTermine ? "current" : "waiting"}`}
                 >
                   <Check size={16} />
                 </div>
-                <span className={isTermine ? "current-text" : ""}>
-                  Terminé
-                </span>
+                <span className={isTermine ? "current-text" : ""}>Terminé</span>
               </div>
 
               
@@ -287,9 +292,7 @@ export default function Dashboardclient() {
                 >
                   <X size={16} />
                 </div>
-                <span className={isAnnule ? "cancelled-text" : ""}>
-                  Annulé
-                </span>
+                <span className={isAnnule ? "cancelled-text" : ""}>Annulé</span>
               </div>
             </div>
 
@@ -308,4 +311,3 @@ export default function Dashboardclient() {
     </div>
   );
 }
-

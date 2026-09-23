@@ -14,6 +14,7 @@ import Dashboardclient from "./Components/clients/Dashboardclient";
 import EtablissementDashboard from "./Components/etablissement/EtablissementDashboard";
 import TableServiceEtablissement from "./Components/etablissement/TableServiceEtablissement";
 import AdminDashboard from "./Components/admin/AdminDashboard";
+import NotFound from "./Components/NotFound/NotFound";
 function App() {
   return (
     <Routes>

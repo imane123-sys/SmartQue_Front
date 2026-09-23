@@ -50,4 +50,10 @@ export const ticketApi = {
 
   getHistorique: (idEtablissement) =>
     connexion.get(`/api/tickets/historique/${idEtablissement}`),
+  updateTempsEstime: (idTicket, tempsEstime) =>
+    connexion.put(`/api/tickets/update/tempsEstime/${idTicket}`, null, {
+      params: {
+        tempestime: tempsEstime,
+      },
+    }),
 };
