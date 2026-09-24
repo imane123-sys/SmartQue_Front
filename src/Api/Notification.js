@@ -1,37 +1,52 @@
 import connexion from "./Connexion";
 
 export const notificationApi = {
-  getByClient: (idClient, page = 0, size = 10) =>
-    connexion.get(
-      `/api/notifications/Notifications/tickets/Client/${idClient}`,
-      {
-        params: {
-          page,
-          size,
-        },
+  getNotificationsClient: (idClient, page = 0, size = 10) =>
+    connexion.get(`/api/notifications/client/${idClient}`, {
+      params: {
+        page,
+        size,
       },
-    ),
+    }),
+  getByClient: (idClient, page = 0, size = 10) =>
+    connexion.get(`/api/notifications/client/${idClient}`, {
+      params: {
+        page,
+        size,
+      },
+    }),
 
+  getNotificationsEtablissement: (idEtablissement, page = 0, size = 10) =>
+    connexion.get(`/api/notifications/etablissement/${idEtablissement}`, {
+      params: {
+        page,
+        size,
+      },
+    }),
+  getByEtablissement: (idEtablissement, page = 0, size = 10) =>
+    connexion.get(`/api/notifications/etablissement/${idEtablissement}`, {
+      params: {
+        page,
+        size,
+      },
+    }),
+
+  // Envoyer une notification de confirmation de ticket
   notificationConfirmation: (idTicket) =>
     connexion.post(`/api/notifications/confirmation/${idTicket}`),
 
-  getByEtablissement: (idEtablissement, page = 0, size = 10) =>
-    connexion.get(
-      `/api/notifications/Notifications/tickets/Etablissemnt/${idEtablissement}`,
-      {
-        params: {
-          page,
-          size,
-        },
-      },
-    ),
-
-  annulerTicket: (idTicket) =>
-    connexion.put(`/api/notifications/annuler-ticket/${idTicket}`),
-
+  notificationUrTurn: (idTicket, idClient) =>
+    connexion.post(`/api/notifications/tour/${idTicket}/${idClient}`),
   notifierTour: (idTicket, idClient) =>
     connexion.post(`/api/notifications/tour/${idTicket}/${idClient}`),
 
+  sendTurnApproachingNotification: (idTicket, position, tempsEstime) =>
+    connexion.post(`/api/notifications/tour-approche/${idTicket}`, null, {
+      params: {
+        position,
+        tempsEstime,
+      },
+    }),
   tourApproche: (idTicket, position, tempsEstime) =>
     connexion.post(`/api/notifications/tour-approche/${idTicket}`, null, {
       params: {
@@ -39,4 +54,9 @@ export const notificationApi = {
         tempsEstime,
       },
     }),
+
+  notificationAnnulationTicket: (idTicket) =>
+    connexion.put(`/api/notifications/annuler-ticket/${idTicket}`),
+  annulerTicket: (idTicket) =>
+    connexion.put(`/api/notifications/annuler-ticket/${idTicket}`),
 };

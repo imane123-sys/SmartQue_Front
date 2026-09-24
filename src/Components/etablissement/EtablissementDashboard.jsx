@@ -5,7 +5,7 @@ import Topbar from "./Topbar";
 import NowServing from "./NowServing";
 import CommandModal from "./CommandModal";
 import WalkInModal from "./WalkInModal";
-import Sidebar from "./SideBar";
+import Sidebar from "./Sidebar";
 import PageHeader from "./Pageheader";
 import StatsCards from "./StatsCards";
 import Queuetabs from "./Queuetabs";

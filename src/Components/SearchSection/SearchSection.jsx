@@ -21,13 +21,12 @@ export const SearchSection = () => {
       .reserve({ clientEmail: user.email, serviceId: id })
       .then((res) => {
         setTicket(res.data);
-        notificationApi
-          .notificationConfirmation(res.data.id)
-          .then((res) => setMessage(res))
-          .catch((err) => setError(err));
+        if (res.data?.id) {
+          localStorage.setItem("selectedTicketId", res.data.id);
+        }
+        navigate("/dashboard-client");
       })
       .catch((err) => setError(err));
-    navigate("/dashboard-client");
   };
 
   const handleSearch = async () => {
