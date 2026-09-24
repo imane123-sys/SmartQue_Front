@@ -140,7 +140,6 @@ export default function Dashboardclient() {
           ),
         );
 
-        // Déclencher notification tour approche si <= 10 min et pas encore envoyé
         if (newMinutes <= 10 && newMinutes > 0 && !approachedTicketsRef.current.has(idTicket)) {
           approachedTicketsRef.current.add(idTicket);
           const currentPos = selectedTicket?.position || 1;
@@ -155,7 +154,6 @@ export default function Dashboardclient() {
       .annuler(idTicket, user.id)
       .then((res) => {
         setSelectedTicket(res.data);
-        // Notifier l'annulation (client et établissement)
         return notificationApi.annulerTicket(idTicket);
       })
       .then(() => {
@@ -184,43 +182,23 @@ export default function Dashboardclient() {
         <div className="top-actions">
           {user?.id && (
             <NotificationBell
+              role="CLIENT"
               topic={`/topic/notifications/${user.id}`}
               fetchNotifications={fetchClientNotifications}
             />
           )}
-
-          <div className="user">
-            <div className="avatar">
-              {user?.email ? user.email.charAt(0).toUpperCase() : "U"}
-            </div>
-            <div className="user-info">
-              <strong>{user?.email}</strong>
-              <span>{user?.role}</span>
-            </div>
-          </div>
         </div>
       </header>
 
       <div className="layout">
         <aside className="icon-sidebar">
           <div className="sidebar-icons">
-            <a href="#" className="sidebar-icon">
+            <Link to="/Etablissement-service" className="sidebar-icon" title="Établissements & Services">
               <House size={16} />
-            </a>
+            </Link>
             <a href="#" className="sidebar-icon active">
               <Ticket size={16} />
             </a>
-          </div>
-
-          <div className="sidebar-bottom">
-            <button
-              type="button"
-              className="admin-logout-btn"
-              onClick={handleLogout}
-              title="Se déconnecter"
-            >
-              <LogOut size={15} />
-            </button>
           </div>
         </aside>
 
@@ -296,7 +274,6 @@ export default function Dashboardclient() {
                 <div className="ticket-stats">
                   <div className="stat">
                     <span>Temps d'estimation</span>
-                    
                     <strong>{selectedTicket?.tempsEstime} min</strong>
                   </div>
 

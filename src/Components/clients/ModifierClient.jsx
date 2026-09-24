@@ -5,7 +5,6 @@ import * as yup from "yup";
 import { clientApi } from "../../Api/Client";
 import { Edit, Close } from "@mui/icons-material";
 
-// 1. Schéma de validation Yup
 const schema = yup.object({
   nom: yup.string().required("Le nom est obligatoire"),
   prenom: yup.string().required("Le prénom est obligatoire"),
@@ -16,7 +15,6 @@ const schema = yup.object({
 });
 
 export default function ModifierClient({ id, onClose, onSuccess }) {
-  // 2. Initialisation du formulaire
   const {
     register,
     handleSubmit,
@@ -26,20 +24,18 @@ export default function ModifierClient({ id, onClose, onSuccess }) {
     resolver: yupResolver(schema),
   });
 
-  // 3. Charger les données du client à modifier (GET)
   useEffect(() => {
     if (id) {
       clientApi.getById(id).then((client) => reset(client));
     }
   }, [id, reset]);
 
-  // 4. Fonction de mise à jour (PUT)
   const onSubmit = async (data) => {
     try {
       await clientApi.update(id, data);
       alert("Client modifié avec succès !");
-      onSuccess(); // Rafraîchit le tableau parent
-      onClose();   // Ferme le formulaire
+      onSuccess();
+      onClose();   
     } catch (err) {
       alert(err.message || "Erreur lors de la modification");
     }
@@ -82,7 +78,6 @@ export default function ModifierClient({ id, onClose, onSuccess }) {
           <p className="error">{errors.password?.message}</p>
         </div>
 
-        
         <input type="hidden" {...register("role")} />
 
         <div className="card-buttons">

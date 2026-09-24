@@ -98,7 +98,7 @@ export const Footer = () => {
           </div>
 
           
-          <div className="sq-footer-col">
+          <div className="sq-footer-col" id="contact">
             <h4 className="sq-footer-title">CONTACT & SUPPORT</h4>
             <p className="sq-footer-desc" style={{ marginBottom: "12px" }}>
               Besoin d'aide ou d'intégrer vos guichets ?

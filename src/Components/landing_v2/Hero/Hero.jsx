@@ -1,5 +1,13 @@
 import React from "react";
-import { ChevronRight, ArrowRight, CheckCircle2, QrCode, Clock, BellRing, Navigation } from "lucide-react";
+import {
+  ChevronRight,
+  ArrowRight,
+  CheckCircle2,
+  QrCode,
+  Clock,
+  BellRing,
+  Navigation,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import "./Hero.css";
 
@@ -7,12 +15,12 @@ export const Hero = () => {
   return (
     <section id="hero" className="sq-hero-section">
       <div className="sq-container sq-hero-grid">
-        
         <div className="sq-hero-left">
-          
           <div className="sq-pretitle-wrapper">
             <span className="sq-pretitle-line"></span>
-            <span className="sq-pretitle-text">La Révolution de la File d'Attente Virtuelle</span>
+            <span className="sq-pretitle-text">
+              La Révolution de la File d'Attente Virtuelle
+            </span>
           </div>
 
           
@@ -21,22 +29,20 @@ export const Hero = () => {
             dans les <span className="sq-highlight">files d'attente</span>.
           </h1>
 
-          
           <p className="sq-hero-subtitle">
-            Prenez votre ticket à distance, suivez votre position en temps réel depuis votre
-            smartphone et ne venez que lorsque c'est votre tour.
+            Prenez votre ticket à distance, suivez votre position en temps réel
+            depuis votre smartphone et ne venez que lorsque c'est votre tour.
           </p>
 
-          
           <div className="sq-hero-cta-group">
             <Link to="/register" className="sq-hero-btn-primary">
               <span>Réserver un ticket en ligne</span>
               <ChevronRight size={16} strokeWidth={2.5} />
             </Link>
-            <Link to="/register" className="sq-hero-btn-secondary">
+            <a to="#contact" className="sq-hero-btn-secondary">
               <span>Vous êtes un établissement ? Rejoignez-nous</span>
               <ArrowRight size={15} strokeWidth={2.2} />
-            </Link>
+            </a>
           </div>
 
           

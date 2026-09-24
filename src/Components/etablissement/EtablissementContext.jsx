@@ -24,11 +24,16 @@ export default function EtablissementProvider({ children }) {
     etablissementApi
       .getTicketsEtablissement(user.id)
       .then((res) => {
-        setTicketEtablissement(res.data.content);
+        const tickets = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.content)
+            ? res.data.content
+            : [];
+        setTicketEtablissement(tickets);
         console.log(res.data);
       })
       .catch((err) => {
-        setErreur(err);
+        setErreur(err?.message || "Erreur de chargement");
       });
   };
   const handleServicesEtablissement = () => {
@@ -48,11 +53,24 @@ export default function EtablissementProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
+    const list = Array.isArray(ticketEtablissement) ? ticketEtablissement : [];
     setTicketEnCours(
-      ticketEtablissement.filter((t) => t.statut === "EN_COURS"),
+      list.filter(
+        (t) =>
+          String(t?.statut || "")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]/g, "_") === "EN_COURS",
+      ),
     );
     setTicketEnAttente(
-      ticketEtablissement.filter((t) => t.statut === "EN_ATTENTE"),
+      list.filter(
+        (t) =>
+          String(t?.statut || "")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]/g, "_") === "EN_ATTENTE",
+      ),
     );
   }, [ticketEtablissement]);
 

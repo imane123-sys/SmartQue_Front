@@ -32,12 +32,14 @@ export default function AdminSidebar({ activeTab, setActiveTab, stats = {} }) {
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar-header">
-        <div className="admin-logo-badge">
-          <ShieldCheck size={22} strokeWidth={2.4} />
-        </div>
-        <div className="admin-brand-info">
-          <h2>SmartQueue</h2>
-          <span>ADMINISTRATION</span>
+        <div className="logo">
+          <div className="logo-icon">
+            <Ticket size={16} />
+          </div>
+          <div>
+            <span className="logo-name">SmartQueue</span>
+            <span className="logo-subtitle">VOTRE TEMPS A DE LA VALEUR</span>
+          </div>
         </div>
       </div>
 

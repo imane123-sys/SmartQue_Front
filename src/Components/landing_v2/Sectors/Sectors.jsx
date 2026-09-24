@@ -46,7 +46,6 @@ export const Sectors = ({ onSelectSector, onViewAllServices }) => {
   return (
     <section id="services" className="sq-sectors-section">
       <div className="sq-container">
-        
         <div className="sq-sectors-header">
           <div>
             <div className="sq-sectors-pretitle">HOW CAN WE HELP?</div>
@@ -65,7 +64,6 @@ export const Sectors = ({ onSelectSector, onViewAllServices }) => {
           </button>
         </div>
 
-        
         <div className="sq-sectors-grid">
           {sectors.map((sec) => {
             const Icon = sec.icon;

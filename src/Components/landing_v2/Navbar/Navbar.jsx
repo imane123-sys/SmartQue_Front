@@ -11,7 +11,6 @@ export const Navbar = () => {
   return (
     <header className="sq-navbar-header">
       <div className="sq-container sq-navbar-container">
-        
         <a href="#hero" className="sq-logo-link">
           <div className="sq-logo-icon">
             <Ticket size={20} strokeWidth={2.2} />
@@ -24,14 +23,11 @@ export const Navbar = () => {
           </div>
         </a>
 
-        
         <nav className="sq-nav-links">
           <a href="#hero" className="sq-nav-link active">
             Accueil
           </a>
-          <a href="#recherche" className="sq-nav-link">
-            Trouver un établissement
-          </a>
+
           <a href="#comment-ca-marche" className="sq-nav-link">
             Comment ça marche ?
           </a>
@@ -50,7 +46,6 @@ export const Navbar = () => {
             <ChevronRight size={15} strokeWidth={2.5} />
           </Link>
 
-          
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}

@@ -3,8 +3,9 @@ import { useAuth } from "../AuthContext";
 import { etablissementApi } from "../../Api/Etablissement";
 import { useEtablissement } from "./EtablissementContext";
 
-export default function QueueTable() {
+export default function QueueTable({ tickets }) {
   const { ticketEtablissement } = useEtablissement();
+  const list = tickets || ticketEtablissement;
 
   useEffect(() => {});
   return (
@@ -13,10 +14,6 @@ export default function QueueTable() {
         <table>
           <thead>
             <tr>
-              <th className="checkbox-column">
-                <input type="checkbox" />
-              </th>
-
               <th>Numéro Ticket</th>
               <th>Nom du client</th>
               <th>nom de service</th>
@@ -24,17 +21,12 @@ export default function QueueTable() {
               <th>Temps Estimé</th>
               <th>status</th>
               <th>Date de création</th>
-              <th className="text-right">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {ticketEtablissement.map((t) => (
+            {list.map((t) => (
               <tr key={t.id}>
-                <td>
-                  <input type="checkbox" />
-                </td>
-
                 <td>
                   <span className="ticket-id">{t.numero}</span>
                 </td>
@@ -45,28 +37,10 @@ export default function QueueTable() {
                 <td>{t.tempsEstime}</td>
                 <td>{t.statut}</td>
                 <td>{t.dateCreation}</td>
-
-                <td className="actions-cell">
-                  <button className="table-action">Call</button>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="table-footer">
-        <div>
-          Showing <strong>4</strong> of <strong>4</strong> waiting visitors
-        </div>
-
-        <div className="pagination">
-          <button disabled>Previous</button>
-
-          <span>Page 1 of 1</span>
-
-          <button disabled>Next</button>
-        </div>
       </div>
     </div>
   );

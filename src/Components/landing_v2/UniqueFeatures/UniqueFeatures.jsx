@@ -58,8 +58,8 @@ export const UniqueFeatures = () => {
           <div className="sq-unique-pretitle">TECHNOLOGIE & INNOVATION</div>
           <h2 className="sq-unique-headline">Nos Fonctionnalités Exclusives</h2>
           <p className="sq-unique-desc">
-            Des outils de pointe développés pour garantir une fiabilité totale aux usagers et une
-            simplicité déconcertante aux établissements.
+            Des outils de pointe développés pour garantir une fiabilité totale
+            aux usagers et une simplicité déconcertante aux établissements.
           </p>
         </div>
 
@@ -67,7 +67,10 @@ export const UniqueFeatures = () => {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div key={f.id} className={`sq-unique-card ${f.featured ? "featured" : ""}`}>
+              <div
+                key={f.id}
+                className={`sq-unique-card ${f.featured ? "featured" : ""}`}
+              >
                 <div
                   className="sq-unique-icon-wrap"
                   style={{ backgroundColor: f.iconBg, color: f.iconColor }}
@@ -82,7 +85,10 @@ export const UniqueFeatures = () => {
                 <div className="sq-unique-points">
                   {f.points.map((pt, i) => (
                     <div key={i} className="sq-unique-pt-item">
-                      <CheckCircle2 size={14} className="sq-unique-check-icon" />
+                      <CheckCircle2
+                        size={14}
+                        className="sq-unique-check-icon"
+                      />
                       <span>{pt}</span>
                     </div>
                   ))}

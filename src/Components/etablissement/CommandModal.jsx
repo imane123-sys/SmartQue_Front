@@ -22,7 +22,6 @@ const CommandModal = () => {
           <span>ESC</span>
         </div>
 
-        
         <div className="command-section">
           <p className="command-title">Quick Actions</p>
 

@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { ArrowRight, Smartphone, Clock, Bell, UserX, Users, BellRing, BarChart3, MapPin } from "lucide-react";
+import {
+  ArrowRight,
+  Smartphone,
+  Clock,
+  Bell,
+  UserX,
+  Users,
+  BellRing,
+  BarChart3,
+  MapPin,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import "./About.css";
 
@@ -34,8 +44,6 @@ export const About = () => {
           desc: "Un imprévu ? Annulez votre ticket en un clic pour libérer votre place automatiquement.",
         },
       ],
-      ctaText: "Créer un compte usager",
-      ctaLink: "/register",
     },
     etablissements: {
       tagline: "Convaincre les Établissements & Professionnels",
@@ -64,8 +72,6 @@ export const About = () => {
           desc: "Référencement immédiat de vos services sur le catalogue et la carte géolocalisée.",
         },
       ],
-      ctaText: "Rejoindre en tant qu'établissement",
-      ctaLink: "/register",
     },
   };
 
@@ -129,21 +135,6 @@ export const About = () => {
                 </div>
               );
             })}
-          </div>
-
-          <div className="sq-about-buttons">
-            <Link
-              to={current.ctaLink}
-              className="sq-btn-primary"
-              style={{ padding: "10px 20px" }}
-            >
-              <span>{current.ctaText}</span>
-              <ArrowRight size={15} strokeWidth={2.5} />
-            </Link>
-
-            <Link to="/login" className="sq-btn-outline">
-              Espace Connexion
-            </Link>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import "./ManagmentTicket.css";
 import { notificationApi } from "../../Api/Notification.js";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 function ManagmentTicket() {
   const [ticket, setTicket] = useState({});
@@ -19,6 +20,15 @@ function ManagmentTicket() {
       .then((res) => setTicket(res.data))
       .catch((err) => setErreur(err));
   }, []);
+
+  const isBase64Image = (str) => {
+    if (!str || typeof str !== "string") return false;
+    return (
+      str.startsWith("data:image/") ||
+      str.startsWith("iVBORw0KGgo") ||
+      (str.length > 100 && !str.includes("-"))
+    );
+  };
 
   return (
     <div className="sq-ticket-page">
@@ -369,15 +379,28 @@ function ManagmentTicket() {
             <span className="sq-corner-bracket sq-bracket-br"></span>
 
             <div className="sq-qr-code-inner">
-              {ticket.qrCode && (
-                <img
-                  src={`data:image/png;base64,${ticket.qrCode}`}
-                  alt="QR Code"
-                  width="120"
-                  height="120"
-                  className="sq-qr-image"
-                />
-              )}
+              {ticket.qrCode || ticket.numero ? (
+                isBase64Image(ticket.qrCode) ? (
+                  <img
+                    src={
+                      ticket.qrCode.startsWith("data:")
+                        ? ticket.qrCode
+                        : `data:image/png;base64,${ticket.qrCode}`
+                    }
+                    alt="QR Code"
+                    width="120"
+                    height="120"
+                    className="sq-qr-image"
+                  />
+                ) : (
+                  <QRCodeSVG
+                    value={ticket.qrCode || `TICKET-${ticket.numero || id}`}
+                    size={120}
+                    level="M"
+                    className="sq-qr-image"
+                  />
+                )
+              ) : null}
             </div>
           </div>
         </div>

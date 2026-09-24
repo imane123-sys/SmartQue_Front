@@ -2,7 +2,6 @@ import React from "react";
 import "./EtablissementDashboard.css";
 
 import Topbar from "./Topbar";
-import NowServing from "./NowServing";
 import CommandModal from "./CommandModal";
 import WalkInModal from "./WalkInModal";
 import Sidebar from "./Sidebar";
@@ -25,8 +24,6 @@ export default function EtablissementDashboard() {
           <PageHeader />
 
           <StatsCards />
-
-          <NowServing />
 
           <Queuetabs />
         </main>

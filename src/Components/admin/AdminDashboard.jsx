@@ -63,18 +63,25 @@ export default function AdminDashboard() {
 
       try {
         let allTickets = [];
-        const etabsToQuery = etabsData.slice(0, 8);
-        const ticketPromises = etabsToQuery.map((e) =>
+        const ticketPromises = etabsData.map((e) =>
           etablissementApi
-            .getTicketsEtablissement(e.id, 0, 50)
+            .getTicketsEtablissement(e.id, 0, 100)
             .then((res) =>
-              Array.isArray(res.data?.content) ? res.data.content : [],
+              Array.isArray(res.data?.content)
+                ? res.data.content
+                : Array.isArray(res.data)
+                  ? res.data
+                  : [],
             )
             .catch(() => []),
         );
 
         const results = await Promise.all(ticketPromises);
-        results.forEach((list) => {});
+        results.forEach((list) => {
+          if (Array.isArray(list)) {
+            allTickets.push(...list);
+          }
+        });
 
         const uniqueTicketsMap = new Map();
         allTickets.forEach((t) => {

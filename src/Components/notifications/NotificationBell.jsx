@@ -3,8 +3,7 @@ import { Bell, CheckCircle, Info, AlertTriangle, X, Clock, CalendarCheck } from 
 import { Client } from "@stomp/stompjs";
 import "./NotificationBell.css";
 
-
-export default function NotificationBell({ topic, fetchNotifications }) {
+export default function NotificationBell({ topic, fetchNotifications, role }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -13,59 +12,33 @@ export default function NotificationBell({ topic, fetchNotifications }) {
   const dropdownRef = useRef(null);
   const fetchRef = useRef(fetchNotifications);
 
-  // Maintient la référence à jour sans déclencher d'effets inutiles
   useEffect(() => {
     fetchRef.current = fetchNotifications;
   }, [fetchNotifications]);
 
-  // Fonction de chargement stable des notifications
   const loadNotifications = useCallback(() => {
     if (!fetchRef.current) return;
 
     fetchRef.current()
       .then((response) => {
         const raw = response?.data?.content || (Array.isArray(response?.data) ? response.data : []);
-        setNotifications((prev) => {
-          // Fusionner avec déduplication par id
-          const map = new Map();
-          // D'abord les nouveaux arrivés de l'API
-          raw.forEach((n) => {
-            if (n && n.id) map.set(n.id, n);
-          });
-          // Conserver également ceux déjà reçus en WebSocket s'ils n'étaient pas encore en base
-          prev.forEach((n) => {
-            if (n && n.id && !map.has(n.id)) map.set(n.id, n);
-          });
-          const merged = Array.from(map.values()).sort(
-            (a, b) => new Date(b.dateEnvoi || 0) - new Date(a.dateEnvoi || 0)
-          );
 
-          // Si le menu n'a pas encore été ouvert, compter les non lus
-          setUnreadCount((currentUnread) => {
-            return currentUnread === 0 && prev.length === 0 ? merged.length : currentUnread;
-          });
+        const filtered = role
+          ? raw.filter((n) => !n.destinataireRole || n.destinataireRole === role)
+          : raw;
 
-          return merged;
-        });
+        setNotifications(filtered);
+        setUnreadCount(filtered.length);
       })
       .catch((error) => {
-        // En cas d'erreur réseau, ne pas bloquer
-        console.warn("[NotificationBell] Erreur chargement notifications:", error?.message);
+        console.warn("[NotificationBell] Erreur chargement:", error?.message);
       });
-  }, []);
+  }, [role]);
 
-  // 1. Chargement initial + Polling de sécurité toutes les 8 secondes
   useEffect(() => {
     loadNotifications();
+  }, [loadNotifications]);
 
-    const interval = setInterval(() => {
-      loadNotifications();
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, [loadNotifications, topic]);
-
-  // 2. Connexion WebSocket (STOMP) en temps réel
   useEffect(() => {
     if (!topic) return;
 
@@ -76,40 +49,26 @@ export default function NotificationBell({ topic, fetchNotifications }) {
     const client = new Client({
       brokerURL,
       reconnectDelay: 4000,
-      debug: () => {
-        // console.log("[STOMP]", str);
-      },
       onConnect: () => {
-        console.log(`[WebSocket STOMP] Connecté au topic : ${topic}`);
-
         client.subscribe(topic, (message) => {
           try {
             const newNotif = JSON.parse(message.body);
-            console.log("[WebSocket STOMP] Notification reçue :", newNotif);
 
-            setNotifications((prevList) => {
-              if (prevList.some((n) => n.id && n.id === newNotif.id)) {
-                return prevList;
-              }
-              return [newNotif, ...prevList];
-            });
+            if (role && newNotif.destinataireRole && newNotif.destinataireRole !== role) {
+              return;
+            }
 
+            setNotifications((prevList) => [newNotif, ...prevList]);
             setUnreadCount((count) => count + 1);
             setToast(newNotif);
 
             setTimeout(() => {
               setToast(null);
-            }, 6000);
+            }, 5000);
           } catch (err) {
-            console.error("[NotificationBell] Erreur de parsing du message WebSocket:", err);
+            console.error("[NotificationBell] Erreur message:", err);
           }
         });
-      },
-      onStompError: (frame) => {
-        console.warn("[WebSocket STOMP Warning]", frame.headers?.message);
-      },
-      onWebSocketError: (err) => {
-        console.warn("[WebSocket Erreur de connexion]", err);
       },
     });
 
@@ -118,9 +77,8 @@ export default function NotificationBell({ topic, fetchNotifications }) {
     return () => {
       client.deactivate();
     };
-  }, [topic]);
+  }, [topic, role]);
 
-  // 3. Fermer le dropdown en cliquant à l'extérieur
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -154,7 +112,6 @@ export default function NotificationBell({ topic, fetchNotifications }) {
     }
   };
 
-  // Type d'événement et styles associés
   const getNotificationCategory = (titre = "") => {
     const lower = titre.toLowerCase();
     if (lower.includes("annulation") || lower.includes("annul")) {
@@ -187,7 +144,6 @@ export default function NotificationBell({ topic, fetchNotifications }) {
 
   return (
     <div className="notification-bell-container" ref={dropdownRef}>
-      
       <button
         type="button"
         className={`notification-trigger-btn ${unreadCount > 0 ? "has-unread" : ""}`}
@@ -202,7 +158,6 @@ export default function NotificationBell({ topic, fetchNotifications }) {
         )}
       </button>
 
-      
       {isOpen && (
         <div className="notification-dropdown">
           <div className="notification-header">
@@ -264,7 +219,6 @@ export default function NotificationBell({ topic, fetchNotifications }) {
         </div>
       )}
 
-      
       {toast && (
         <div className="notification-toast">
           <div className="notification-toast-content">

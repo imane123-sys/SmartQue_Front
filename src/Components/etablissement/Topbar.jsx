@@ -14,21 +14,11 @@ export default function Topbar() {
 
   return (
     <header className="topbar">
-      <div className="brand-area">
-        <div className="logo">
-          <div className="logo-icon">
-            <Ticket size={16} />
-          </div>
-          <div>
-            <span className="logo-name">SmartQueue</span>
-            <span className="logo-subtitle">VOTRE TEMPS A DE LA VALEUR</span>
-          </div>
-        </div>
-      </div>
 
       <div className="topbar-actions">
         {user?.id && (
           <NotificationBell
+            role="ETABLISSEMENT"
             topic={`/topic/notifications/etablissement/${user.id}`}
             fetchNotifications={fetchEtabNotifications}
           />
@@ -41,4 +31,3 @@ export default function Topbar() {
     </header>
   );
 }
-

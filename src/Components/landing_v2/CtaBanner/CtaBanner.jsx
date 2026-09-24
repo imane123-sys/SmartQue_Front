@@ -11,10 +11,12 @@ export const CtaBanner = () => {
           
           <div className="sq-cta-content">
             <div className="sq-cta-pill">REJOIGNEZ LA NOUVELLE EXPÉRIENCE</div>
-            <h2 className="sq-cta-title">Prêt à moderniser votre façon d'attendre ?</h2>
+            <h2 className="sq-cta-title">
+              Prêt à moderniser votre façon d'attendre ?
+            </h2>
             <p className="sq-cta-subtitle">
-              Créez votre compte en moins de 2 minutes et prenez votre premier ticket dès
-              maintenant.
+              Créez votre compte en moins de 2 minutes et prenez votre premier
+              ticket dès maintenant.
             </p>
           </div>
 

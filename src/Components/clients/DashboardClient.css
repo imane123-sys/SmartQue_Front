@@ -4,15 +4,6 @@
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  height: 100vh !important;
-  max-height: 100vh !important;
-  overflow: hidden !important;
-  margin: 0;
-  padding: 0;
-}
 
 body {
   font-family: "Inter", sans-serif;
@@ -43,15 +34,16 @@ a {
 }
 
 .topbar {
-  height: 48px;
-  background: white;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid #e2e8f0;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 18px;
+  padding: 0 20px;
 
   position: sticky;
   top: 0;
@@ -60,12 +52,10 @@ a {
 }
 
 
-
 .brand-area {
-  display: flex;
+  display: flex !important;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 12px;
 }
 
 .logo {
@@ -77,37 +67,32 @@ a {
 .logo-icon {
   width: 28px;
   height: 28px;
-
   border-radius: 6px;
-
   background: linear-gradient(135deg, #06b6d4, #006adc);
-
   color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .logo-name {
   display: block;
   font-size: 13px;
   font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
 }
 
 .logo-subtitle {
   display: block;
-
   margin-top: 1px;
-
   font-size: 8px;
   font-weight: 700;
-
   color: #64748b;
-
   letter-spacing: 0.8px;
+  line-height: 1.2;
 }
-
 
 
 .live-badge {
@@ -147,11 +132,11 @@ a {
 }
 
 
-
 .top-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  margin-left: auto;
 }
 
 .primary-btn {
@@ -200,7 +185,6 @@ a {
 }
 
 
-
 .notification-count {
   position: absolute;
 
@@ -226,48 +210,48 @@ a {
 }
 
 
-
 .user {
   display: flex;
   align-items: center;
-  gap: 8px;
-
+  gap: 10px;
   margin-left: 4px;
 }
 
 .avatar {
-  width: 28px;
-  height: 28px;
-
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-
   background: #0f172a;
   color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .user-info strong {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.2;
 }
 
 .user-info span {
   display: block;
   margin-top: 1px;
-
-  font-size: 9px;
+  font-size: 10px;
   color: #64748b;
+  text-transform: capitalize;
+  line-height: 1.2;
 }
 
 .layout {
-  height: calc(100vh - 48px);
-  max-height: calc(100vh - 48px);
+  height: calc(100vh - 56px);
+  max-height: calc(100vh - 56px);
   display: flex;
   overflow: hidden;
 }
@@ -285,9 +269,9 @@ a {
   flex-direction: column;
 
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 .sidebar-icons {
@@ -853,7 +837,6 @@ a {
 .cancel-btn:hover {
   background: #b91c1c;
 }
-
 
 
 .status-waiting {
