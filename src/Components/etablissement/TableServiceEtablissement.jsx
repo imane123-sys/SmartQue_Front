@@ -154,7 +154,6 @@ export default function TableServiceEtablissement() {
         <Topbar />
 
         <main className="content">
-          
           <div className="services-page-header">
             <div>
               <div className="services-page-title">
@@ -178,7 +177,6 @@ export default function TableServiceEtablissement() {
             </button>
           </div>
 
-          
           {feedback.message && (
             <div className={`services-alert ${feedback.type}`}>
               {feedback.type === "success" ? (
@@ -190,7 +188,6 @@ export default function TableServiceEtablissement() {
             </div>
           )}
 
-          
           <div className="services-toolbar">
             <div className="services-search-box">
               <Search size={16} />
@@ -216,7 +213,6 @@ export default function TableServiceEtablissement() {
             </div>
           </div>
 
-          
           <div className="table-card">
             <div className="table-wrapper">
               <table>
@@ -299,7 +295,6 @@ export default function TableServiceEtablissement() {
             </div>
           </div>
 
-          
           {modalOpen && (
             <div className="services-modal-backdrop" onClick={handleCloseModal}>
               <div
@@ -413,7 +408,6 @@ export default function TableServiceEtablissement() {
             </div>
           )}
 
-          
           {deleteConfirmService && (
             <div
               className="services-modal-backdrop"

@@ -43,8 +43,6 @@ button {
   color: var(--foreground);
 }
 
-
-
 .sidebar {
   width: 256px;
   height: 100vh;
@@ -104,8 +102,6 @@ button {
   background: var(--muted);
   color: var(--foreground);
 }
-
-
 
 .sidebar-navigation {
   flex: 1;
@@ -187,8 +183,6 @@ button {
   justify-content: space-between;
 }
 
-
-
 .queue-load {
   padding: 14px;
   border-top: 1px solid var(--border);
@@ -228,8 +222,6 @@ button {
   color: var(--muted-text);
   font-size: 10px;
 }
-
-
 
 .sidebar-user {
   padding: 12px;
@@ -308,8 +300,6 @@ button {
   color: #ef4444;
 }
 
-
-
 .main-area {
   flex: 1;
   min-width: 0;
@@ -318,8 +308,6 @@ button {
   height: 100vh;
   overflow: hidden;
 }
-
-
 
 .topbar {
   height: 56px;
@@ -334,7 +322,6 @@ button {
   top: 0;
   z-index: 10;
 }
-
 
 .dashboard-container .topbar .brand-area {
   display: none;
@@ -488,8 +475,6 @@ button {
   background: var(--border);
 }
 
-
-
 .content {
   flex: 1;
   width: 100%;
@@ -597,8 +582,6 @@ button {
 .primary-button:hover {
   background: var(--primary-dark);
 }
-
-
 
 .stats-grid {
   display: grid;
@@ -794,8 +777,6 @@ button {
   font-size: 16px;
 }
 
-
-
 .tabs-section {
   margin-top: 24px;
 }
@@ -885,8 +866,6 @@ button {
   border-color: var(--primary);
   box-shadow: 0 0 0 1px var(--primary);
 }
-
-
 
 .table-card {
   margin-top: 16px;
@@ -1017,8 +996,6 @@ input[type="checkbox"] {
   cursor: not-allowed;
 }
 
-
-
 .counters-section {
   display: none;
   margin-top: 16px;
@@ -1114,8 +1091,6 @@ input[type="checkbox"] {
   border-color: var(--primary) !important;
   color: white !important;
 }
-
-
 
 .analytics-section {
   display: none;
@@ -1244,8 +1219,6 @@ input[type="checkbox"] {
   font-size: 11px;
 }
 
-
-
 .command-modal,
 .walkin-modal {
   display: none;
@@ -1354,8 +1327,6 @@ input[type="checkbox"] {
   font-size: 11px;
 }
 
-
-
 .walkin-box {
   max-width: 430px;
   padding: 24px;
@@ -1430,8 +1401,6 @@ input[type="checkbox"] {
   margin-top: 16px;
   border-top: 1px solid var(--border);
 }
-
-
 
 @media (max-width: 1100px) {
   .stats-grid {
@@ -1595,8 +1564,6 @@ input[type="checkbox"] {
     display: none;
   }
 
-  
-
   #service-form {
     border: none;
     padding: 0;
@@ -1610,7 +1577,6 @@ input[type="checkbox"] {
     background: rgba(0, 0, 0, 0.5);
   }
 
-  
   .walkin-box {
     width: 100%;
     max-width: 650px;
@@ -1641,17 +1607,15 @@ input[type="checkbox"] {
     font-size: 13px;
   }
 
-  
+
   .walkin-form {
     padding-top: 24px;
   }
 
-  
   .form-group {
     margin-bottom: 20px;
   }
 
-  
   .form-group label {
     display: block;
     margin-bottom: 8px;
@@ -1659,7 +1623,6 @@ input[type="checkbox"] {
     font-weight: 600;
   }
 
-  
   .form-group input,
   .form-group select,
   .form-group textarea {
@@ -1674,14 +1637,12 @@ input[type="checkbox"] {
     outline: none;
   }
 
-  
   .form-group textarea {
     min-height: 100px;
     resize: vertical;
     font-family: inherit;
   }
 
-  
   .form-group input:focus,
   .form-group select:focus,
   .form-group textarea:focus {
@@ -1689,14 +1650,12 @@ input[type="checkbox"] {
     box-shadow: 0 0 0 1px var(--primary);
   }
 
-  
   .service-error {
     margin-top: 5px;
     color: #dc2626;
     font-size: 11px;
   }
 
-  
   .walkin-actions {
     display: flex;
     align-items: center;
@@ -1715,7 +1674,6 @@ input[type="checkbox"] {
     cursor: pointer;
   }
 
-  
   .secondary-button {
     border: 1px solid var(--border);
     background: white;
@@ -1723,7 +1681,6 @@ input[type="checkbox"] {
     font-weight: 500;
   }
 
-  
   .primary-button {
     border: 0;
     background: var(--primary);
@@ -1732,7 +1689,6 @@ input[type="checkbox"] {
     box-shadow: 0 2px 6px rgba(0, 106, 220, 0.2);
   }
 }
-
 
 
 .sidebar-nav-link {

@@ -1,7 +1,5 @@
 
-
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap");
-
 
 .sq-ticket-page {
   position: relative;
@@ -35,7 +33,6 @@
   color: #0f172a;
 }
 
-
 .sq-ticket-card {
   width: 100%;
   max-width: 405px;
@@ -63,7 +60,6 @@
   z-index: 1;
 }
 
-
 .sq-zellige-watermark {
   position: absolute;
   pointer-events: none;
@@ -87,7 +83,6 @@
   justify-content: space-between;
   gap: 10px;
 }
-
 
 .sq-header-brand {
   display: flex;
@@ -136,7 +131,6 @@
   margin-top: 2px;
 }
 
-
 .sq-header-cursive {
   font-family: "Caveat", cursive;
   color: #bae6fd;
@@ -149,7 +143,6 @@
   white-space: nowrap;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
-
 
 .sq-header-wave-bottom {
   position: absolute;
@@ -179,7 +172,6 @@
   z-index: 2;
   box-sizing: border-box;
 }
-
 
 .sq-ticket-subheading {
   display: flex;
@@ -339,7 +331,6 @@
   box-sizing: border-box;
 }
 
-
 .sq-metric-position {
   background: #dbeafe;
   border: 1px solid #c3dcfe;
@@ -374,7 +365,6 @@
   line-height: 1;
   margin-top: 1px;
 }
-
 
 .sq-metric-time {
   background: linear-gradient(135deg, #1d68e1 0%, #1557c0 100%);
@@ -455,7 +445,6 @@
   text-align: center;
 }
 
-
 .sq-qr-scanner-frame {
   position: relative;
   align-self: center;
@@ -470,7 +459,6 @@
   justify-content: center;
   margin-bottom: 2px;
 }
-
 
 .sq-corner-bracket {
   position: absolute;
@@ -526,7 +514,6 @@
   object-fit: contain;
   border-radius: 4px;
 }
-
 
 .sq-ticket-footer-wave {
   position: relative;

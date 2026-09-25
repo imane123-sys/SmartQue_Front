@@ -246,7 +246,6 @@
   letter-spacing: 0.02em;
 }
 
-
 .sq-reg-input-wrap {
   position: relative;
   display: flex;
@@ -298,7 +297,6 @@
   font-weight: 400;
 }
 
-
 .sq-phone-prefix {
   display: flex;
   align-items: center;
@@ -315,7 +313,6 @@
 .sq-phone-input {
   letter-spacing: 0.03em;
 }
-
 
 .sq-eye-btn {
   background: transparent;
@@ -403,7 +400,6 @@
 .sq-reg-link:hover {
   color: #0066ee;
 }
-
 
 .sq-reg-submit-btn {
   width: 100%;

@@ -96,7 +96,6 @@ function ManagmentTicket() {
           </div>
 
           <div className="sq-header-top-row">
-            
             <div className="sq-header-brand">
               <div className="sq-header-logo-icon">
                 <svg
@@ -123,14 +122,12 @@ function ManagmentTicket() {
               </div>
             </div>
 
-            
             <div className="sq-header-cursive">
               <span>Votre service,</span>
               <span>en toute sérénité</span>
             </div>
           </div>
 
-          
           <div className="sq-header-wave-bottom" aria-hidden="true">
             <svg viewBox="0 0 500 24" preserveAspectRatio="none">
               <path
@@ -141,7 +138,6 @@ function ManagmentTicket() {
           </div>
         </div>
 
-        
         <div className="sq-ticket-inner-content">
           
           <div className="sq-ticket-subheading">
@@ -152,7 +148,6 @@ function ManagmentTicket() {
             <span className="sq-line"></span>
           </div>
 
-          
           <div className="sq-hero-number-box">
             <div className="sq-number-left">
               <span className="sq-number-label">NUMÉRO</span>
@@ -224,7 +219,6 @@ function ManagmentTicket() {
             </div>
           </div>
 
-          
           <div className="sq-info-card">
             <div className="sq-info-icon-circle">
               <svg
@@ -258,7 +252,6 @@ function ManagmentTicket() {
             </div>
           </div>
 
-          
           <div className="sq-info-card">
             <div className="sq-info-icon-circle">
               <svg
@@ -291,9 +284,7 @@ function ManagmentTicket() {
             </div>
           </div>
 
-          
           <div className="sq-dual-metrics-grid">
-            
             <div className="sq-metric-card sq-metric-position">
               <div className="sq-micon-blue">
                 <svg
@@ -311,7 +302,6 @@ function ManagmentTicket() {
               </div>
             </div>
 
-            
             <div className="sq-metric-card sq-metric-time">
               <div className="sq-micon-clock">
                 <svg
@@ -341,7 +331,6 @@ function ManagmentTicket() {
             </div>
           </div>
 
-          
           <div className="sq-ticket-creation-date">
             <svg
               width="15"
@@ -362,7 +351,6 @@ function ManagmentTicket() {
             <span>Date de création : {ticket.dateCreation ?? "—"}</span>
           </div>
 
-          
           <div className="sq-qr-header-line">
             <span className="sq-qr-line"></span>
             <span className="sq-qr-header-text">
@@ -371,7 +359,6 @@ function ManagmentTicket() {
             <span className="sq-qr-line"></span>
           </div>
 
-          
           <div className="sq-qr-scanner-frame">
             <span className="sq-corner-bracket sq-bracket-tl"></span>
             <span className="sq-corner-bracket sq-bracket-tr"></span>
@@ -405,9 +392,7 @@ function ManagmentTicket() {
           </div>
         </div>
 
-        
         <div className="sq-ticket-footer-wave">
-          
           <div className="sq-footer-wave-svg" aria-hidden="true">
             <svg viewBox="0 0 500 28" preserveAspectRatio="none">
               <path
@@ -417,7 +402,6 @@ function ManagmentTicket() {
             </svg>
           </div>
 
-          
           <div
             className="sq-zellige-watermark sq-zellige-bottom"
             aria-hidden="true"

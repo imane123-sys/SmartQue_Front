@@ -1,10 +1,8 @@
-
 .notification-bell-container {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
-
 
 .notification-trigger-btn {
   position: relative;
@@ -31,7 +29,6 @@
   color: #2563eb;
 }
 
-
 .notification-badge-count {
   position: absolute;
   top: -5px;
@@ -56,7 +53,6 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
 }
-
 
 .notification-dropdown {
   position: absolute;
@@ -83,7 +79,6 @@
     transform: translateY(0);
   }
 }
-
 
 .notification-header {
   display: flex;
@@ -125,7 +120,6 @@
 .mark-read-btn:hover {
   text-decoration: underline;
 }
-
 
 .notification-list {
   max-height: 360px;
@@ -246,7 +240,6 @@
   color: #94a3b8;
 }
 
-
 .notification-empty {
   padding: 32px 16px;
   text-align: center;
@@ -258,7 +251,6 @@
   margin-bottom: 8px;
   color: #cbd5e1;
 }
-
 
 .notification-toast {
   position: fixed;

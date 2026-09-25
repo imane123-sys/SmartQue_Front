@@ -486,7 +486,6 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-
 .sq-approach-section {
   padding: 80px 24px;
   max-width: 1140px;
@@ -620,7 +619,6 @@ body {
   justify-content: center;
   gap: 10px;
 }
-
 
 .sq-chart-widget {
   background: #f8fafc;
@@ -828,7 +826,6 @@ body {
   max-width: 540px;
   margin: 0 auto 32px;
 }
-
 
 .sq-footer {
   background: #ffffff;
