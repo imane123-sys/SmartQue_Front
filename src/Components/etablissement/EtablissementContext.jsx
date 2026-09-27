@@ -13,10 +13,10 @@ export default function EtablissementProvider({ children }) {
   const { user } = useAuth();
 
   const [ticketEtablissement, setTicketEtablissement] = useState([]);
-  const [erreur, setErreur] = useState("");
   const [ticketEnCours, setTicketEnCours] = useState([]);
   const [TicketEnAttente, setTicketEnAttente] = useState([]);
   const [servicesEtablissement, setServicesEtablissement] = useState([]);
+  const [erreur, setErreur] = useState("");
 
   const handleTicketsEtablissement = () => {
     if (!user) return;
@@ -24,66 +24,44 @@ export default function EtablissementProvider({ children }) {
     etablissementApi
       .getTicketsEtablissement(user.id)
       .then((res) => {
-        const tickets = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.content)
-            ? res.data.content
-            : [];
-        setTicketEtablissement(tickets);
-        console.log(res.data);
+        const liste = res.data?.content || res.data || [];
+
+        setTicketEtablissement(liste);
+
+        setTicketEnCours(liste.filter((t) => t.statut === "EN_COURS"));
+        setTicketEnAttente(liste.filter((t) => t.statut === "EN_ATTENTE"));
       })
       .catch((err) => {
-        setErreur(err?.message || "Erreur de chargement");
+        setErreur("Erreur lors du chargement des tickets");
       });
   };
+
   const handleServicesEtablissement = () => {
     if (!user) return;
 
     serviceApi
       .getAllServicesByEtablissemntId(user.id)
       .then((res) => setServicesEtablissement(res.data))
-      .catch((err) => {
-        setErreur(err);
-      });
+      .catch((err) => setErreur("Erreur chargement services"));
   };
 
   useEffect(() => {
-    handleTicketsEtablissement();
-    handleServicesEtablissement();
+    if (user) {
+      handleTicketsEtablissement();
+      handleServicesEtablissement();
+    }
   }, [user]);
-
-  useEffect(() => {
-    const list = Array.isArray(ticketEtablissement) ? ticketEtablissement : [];
-    setTicketEnCours(
-      list.filter(
-        (t) =>
-          String(t?.statut || "")
-            .trim()
-            .toUpperCase()
-            .replace(/[\s-]/g, "_") === "EN_COURS",
-      ),
-    );
-    setTicketEnAttente(
-      list.filter(
-        (t) =>
-          String(t?.statut || "")
-            .trim()
-            .toUpperCase()
-            .replace(/[\s-]/g, "_") === "EN_ATTENTE",
-      ),
-    );
-  }, [ticketEtablissement]);
 
   return (
     <EtablissementContext.Provider
       value={{
         ticketEtablissement,
         ticketEnCours,
-        erreur,
         TicketEnAttente,
+        servicesEtablissement,
+        erreur,
         handleTicketsEtablissement,
         handleServicesEtablissement,
-        servicesEtablissement,
       }}
     >
       {children}
