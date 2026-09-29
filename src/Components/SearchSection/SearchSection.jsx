@@ -11,7 +11,6 @@ export const SearchSection = () => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState("");
   const [ticket, setTicket] = useState("");
   const { user } = useAuth();
 

@@ -21,7 +21,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, stats = {} }) {
       logout();
     } else {
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
     }
     navigate("/login");
   };

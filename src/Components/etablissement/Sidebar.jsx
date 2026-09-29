@@ -17,7 +17,6 @@ export default function Sidebar() {
       logout();
     } else {
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
     }
     localStorage.removeItem("ticket");
     localStorage.removeItem("selectedTicketId");

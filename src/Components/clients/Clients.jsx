@@ -57,7 +57,7 @@ export default function Clients() {
     return texte.includes(search.toLowerCase());
   });
 
-  return (
+  return ( 
     <div className="clients-container">
       <header className="clients-header">
         <Link to="/" className="brand">

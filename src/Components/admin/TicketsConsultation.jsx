@@ -1,49 +1,18 @@
 import React, { useState } from "react";
-import {
-  Search,
-  Ticket,
-  Clock,
-  Building2,
-  Layers,
-  User,
-  Eye,
-  X,
-  QrCode,
-  Calendar,
-} from "lucide-react";
+import { Search, Clock, Building2, Layers, User, Eye, X } from "lucide-react";
 
 export default function TicketsConsultation({
   tickets = [],
   etablissements = [],
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("ALL");
-  const [filterEtablissement, setFilterEtablissement] = useState("ALL");
+  const [filterEtab, setFilterEtab] = useState("ALL");
   const [selectedTicket, setSelectedTicket] = useState(null);
 
-  const filteredTickets = tickets.filter((t) => {
-    const s = String(t.statut || "").toUpperCase();
-    const matchesStatut =
-      filterStatut === "ALL" ||
-      s === filterStatut ||
-      (filterStatut === "ABSENT" && s === "ANNULE");
-
-    const matchesEtab =
-      filterEtablissement === "ALL" ||
-      String(t.etablissementId) === String(filterEtablissement) ||
-      String(t.nomEtablissement).toLowerCase() ===
-        String(filterEtablissement).toLowerCase();
-
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch =
-      String(t.numero || "").includes(searchLower) ||
-      (t.nomClient || "").toLowerCase().includes(searchLower) ||
-      (t.clientNomComplet || "").toLowerCase().includes(searchLower) ||
-      (t.nomService || "").toLowerCase().includes(searchLower) ||
-      (t.nomEtablissement || "").toLowerCase().includes(searchLower);
-
-    return matchesStatut && matchesEtab && matchesSearch;
-  });
+  const getClient = (t) => t.nomClient || t.clientNomComplet || "Client";
+  const getService = (t) => t.nomService || t.serviceNom || "—";
+  const getEtab = (t) => t.nomEtablissement || t.etablissementNom || "—";
 
   const getStatusBadge = (statut) => {
     const s = String(statut || "").toUpperCase();
@@ -59,9 +28,41 @@ export default function TicketsConsultation({
     return <span className="admin-badge status-waiting">En attente</span>;
   };
 
+  const filteredTickets = tickets.filter((t) => {
+    const statut = String(t.statut || "").toUpperCase();
+    const client = getClient(t).toLowerCase();
+    const service = getService(t).toLowerCase();
+    const etab = getEtab(t).toLowerCase();
+    const searchLower = search.toLowerCase();
+
+    const matchStatut =
+      filterStatut === "ALL" ||
+      statut === filterStatut ||
+      (filterStatut === "ABSENT" && statut === "ANNULE");
+
+    const matchEtab = filterEtab === "ALL" || getEtab(t) === filterEtab;
+
+    const matchSearch =
+      String(t.numero || "").includes(searchLower) ||
+      client.includes(searchLower) ||
+      service.includes(searchLower) ||
+      etab.includes(searchLower);
+
+    return matchStatut && matchEtab && matchSearch;
+  });
+
+  const qrCodeValue = selectedTicket?.qrCode;
+  const isQrImage =
+    qrCodeValue &&
+    (qrCodeValue.startsWith("data:") || qrCodeValue.length > 100);
+  const qrImageSrc = isQrImage
+    ? qrCodeValue.startsWith("data:")
+      ? qrCodeValue
+      : `data:image/png;base64,${qrCodeValue}`
+    : null;
+
   return (
     <div className="admin-tickets-view">
-      
       <div className="admin-toolbar">
         <div className="admin-toolbar-left" style={{ flexWrap: "wrap" }}>
           <div className="admin-search-wrap">
@@ -69,8 +70,8 @@ export default function TicketsConsultation({
             <input
               type="text"
               placeholder="Rechercher par n° de ticket, client, service..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="admin-search-input"
             />
           </div>
@@ -88,8 +89,8 @@ export default function TicketsConsultation({
           </select>
 
           <select
-            value={filterEtablissement}
-            onChange={(e) => setFilterEtablissement(e.target.value)}
+            value={filterEtab}
+            onChange={(e) => setFilterEtab(e.target.value)}
             className="admin-filter-select"
           >
             <option value="ALL">Tous les établissements</option>
@@ -112,7 +113,6 @@ export default function TicketsConsultation({
         </div>
       </div>
 
-      
       <div className="admin-table-card">
         <div className="admin-table-wrapper">
           <table className="admin-table">
@@ -153,11 +153,7 @@ export default function TicketsConsultation({
                         }}
                       >
                         <User size={13} color="var(--admin-muted-text)" />
-                        <strong>
-                          {ticket.nomClient ||
-                            ticket.clientNomComplet ||
-                            "Client"}
-                        </strong>
+                        <strong>{getClient(ticket)}</strong>
                       </div>
                     </td>
                     <td>
@@ -169,9 +165,7 @@ export default function TicketsConsultation({
                         }}
                       >
                         <Layers size={13} color="var(--admin-muted-text)" />
-                        <span>
-                          {ticket.nomService || ticket.serviceNom || "—"}
-                        </span>
+                        <span>{getService(ticket)}</span>
                       </div>
                     </td>
                     <td>
@@ -182,12 +176,8 @@ export default function TicketsConsultation({
                           gap: "6px",
                         }}
                       >
-                        <Building2 size={13} color="var(--admin-primary)" />
-                        <span>
-                          {ticket.nomEtablissement ||
-                            ticket.etablissementNom ||
-                            "—"}
-                        </span>
+                        <Building2 size={14} color="var(--admin-primary)" />
+                        <span>{getEtab(ticket)}</span>
                       </div>
                     </td>
                     <td>
@@ -242,7 +232,6 @@ export default function TicketsConsultation({
         </div>
       </div>
 
-      
       {selectedTicket && (
         <div
           className="admin-modal-overlay"
@@ -266,7 +255,6 @@ export default function TicketsConsultation({
             </div>
 
             <div className="admin-modal-body">
-              
               <div
                 style={{
                   padding: "16px",
@@ -301,35 +289,19 @@ export default function TicketsConsultation({
                 <div>{getStatusBadge(selectedTicket.statut)}</div>
               </div>
 
-              
               <div className="admin-detail-card">
                 <div className="admin-detail-item">
                   <strong>Client</strong>
-                  <span>
-                    {selectedTicket.nomClient ||
-                      selectedTicket.clientNomComplet ||
-                      "—"}
-                  </span>
+                  <span>{getClient(selectedTicket)}</span>
                 </div>
-
                 <div className="admin-detail-item">
                   <strong>Établissement</strong>
-                  <span>
-                    {selectedTicket.nomEtablissement ||
-                      selectedTicket.etablissementNom ||
-                      "—"}
-                  </span>
+                  <span>{getEtab(selectedTicket)}</span>
                 </div>
-
                 <div className="admin-detail-item">
                   <strong>Service Demandé</strong>
-                  <span>
-                    {selectedTicket.nomService ||
-                      selectedTicket.serviceNom ||
-                      "—"}
-                  </span>
+                  <span>{getService(selectedTicket)}</span>
                 </div>
-
                 <div className="admin-detail-item">
                   <strong>Position dans la file</strong>
                   <span>
@@ -338,7 +310,6 @@ export default function TicketsConsultation({
                       : "—"}
                   </span>
                 </div>
-
                 <div className="admin-detail-item">
                   <strong>Temps d'attente estimé</strong>
                   <span>
@@ -347,15 +318,13 @@ export default function TicketsConsultation({
                       : "—"}
                   </span>
                 </div>
-
                 <div className="admin-detail-item">
                   <strong>Date d'émission</strong>
                   <span>{selectedTicket.dateCreation || "—"}</span>
                 </div>
               </div>
 
-              
-              {selectedTicket.qrCode && (
+              {qrCodeValue && (
                 <div style={{ textAlign: "center", padding: "12px 0" }}>
                   <span
                     style={{
@@ -367,14 +336,10 @@ export default function TicketsConsultation({
                   >
                     Code QR du ticket
                   </span>
-                  {selectedTicket.qrCode.startsWith("data:") ||
-                  selectedTicket.qrCode.length > 100 ? (
+
+                  {isQrImage ? (
                     <img
-                      src={
-                        selectedTicket.qrCode.startsWith("data:")
-                          ? selectedTicket.qrCode
-                          : `data:image/png;base64,${selectedTicket.qrCode}`
-                      }
+                      src={qrImageSrc}
                       alt="QR Code"
                       style={{
                         width: "120px",
@@ -394,13 +359,14 @@ export default function TicketsConsultation({
                         display: "inline-block",
                       }}
                     >
-                      ID Unique : {selectedTicket.qrCode}
+                      ID Unique : {qrCodeValue}
                     </div>
                   )}
                 </div>
               )}
             </div>
 
+            {/* Pied de la modale */}
             <div className="admin-modal-footer">
               <button
                 type="button"

@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   House,
   Ticket,
-  Bell,
   Plus,
   Check,
   X,
@@ -12,50 +11,49 @@ import {
   CircleX,
   LogOut,
 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./DashboardClient.css";
 import { useAuth } from "../AuthContext";
 import { ticketApi } from "../../Api/Ticket";
 import { notificationApi } from "../../Api/Notification";
 import NotificationBell from "../notifications/NotificationBell";
-import { Link, useNavigate } from "react-router-dom";
 
 function Countdown({ initialMinutes, idTicket, onMinuteElapsed }) {
-  const [seconds, setSeconds] = useState(initialMinutes * 60);
+  const [secondes, setSecondes] = useState((initialMinutes || 1) * 60);
 
   useEffect(() => {
-    setSeconds((initialMinutes || 1) * 60);
-  }, [idTicket, initialMinutes]);
+    const totalSecondes = (initialMinutes || 1) * 60;
+    setSecondes(totalSecondes);
+  }, [initialMinutes, idTicket]);
 
   useEffect(() => {
-    if (seconds <= 0) return;
+    if (secondes <= 0) return;
 
-    const interval = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        const newSeconds = prev - 1;
+    const timer = setInterval(() => {
+      const nouvellesSecondes = secondes - 1;
+      setSecondes(nouvellesSecondes);
 
-        if (newSeconds % 60 === 0) {
-          const newMinutes = Math.floor(newSeconds / 60);
-          onMinuteElapsed(idTicket, newMinutes);
-        }
-
-        return newSeconds;
-      });
+      if (nouvellesSecondes % 60 === 0) {
+        const minutesRestantes = Math.floor(nouvellesSecondes / 60);
+        onMinuteElapsed(idTicket, minutesRestantes);
+      }
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [idTicket, onMinuteElapsed]);
+    return () => clearInterval(timer);
+  }, [secondes, idTicket, onMinuteElapsed]);
 
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
+  const minutes = Math.floor(secondes / 60);
+  const sec = secondes % 60;
+
+  let secTexte = sec;
+  if (sec < 10) {
+    secTexte = "0" + sec;
+  }
 
   return (
     <div>
-      {minutes}:{remainingSeconds.toString().padStart(2, "0")}
+      {minutes}:{secTexte}
     </div>
   );
 }
@@ -63,93 +61,83 @@ function Countdown({ initialMinutes, idTicket, onMinuteElapsed }) {
 export default function Dashboardclient() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
   const [ticketClient, setTicketClient] = useState([]);
-  const [erreur, setErreur] = useState("");
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [erreur, setErreur] = useState("");
+  const [notifsEnvoyees, setNotifsEnvoyees] = useState([]);
 
-  const handleLogout = () => {
-    if (logout) {
-      logout();
-    } else {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    }
-    localStorage.removeItem("ticket");
-    localStorage.removeItem("selectedTicketId");
-    navigate("/login");
-  };
+  function handleGetTickets() {
+    if (!user || !user.id) return;
 
-  const statutNormalized = selectedTicket?.statut
-    ? String(selectedTicket.statut)
-        .trim()
-        .toUpperCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[\s-]/g, "_")
-    : "";
-
-  const isEnAttente = statutNormalized === "EN_ATTENTE";
-  const isEnCours = statutNormalized === "EN_COURS";
-  const isTermine = statutNormalized === "TERMINE";
-  const isAnnule =
-    statutNormalized === "ANNULE" || statutNormalized === "ABSENT";
-
-  const handleGetTickets = () => {
-    if (!user?.id) return;
     ticketApi
       .getTicketClient(user.id)
       .then((res) => {
-        const tickets = Array.isArray(res.data) ? res.data : [];
+        const tickets = res.data || [];
         setTicketClient(tickets);
 
         if (tickets.length > 0) {
           const savedTicketId = localStorage.getItem("selectedTicketId");
-          const freshTicket =
-            tickets.find((t) => String(t.id) === String(savedTicketId)) ||
-            tickets[0];
-          setSelectedTicket(freshTicket);
-          localStorage.setItem("selectedTicketId", freshTicket.id);
+
+          let ticketChoisi = tickets.find(
+            (t) => String(t.id) === String(savedTicketId),
+          );
+
+          if (!ticketChoisi) {
+            ticketChoisi = tickets[0];
+          }
+
+          setSelectedTicket(ticketChoisi);
+          localStorage.setItem("selectedTicketId", ticketChoisi.id);
         }
       })
-      .catch((err) => setErreur(err?.message || "Erreur de chargement"));
-  };
+      .catch((err) => {
+        setErreur(err?.message || "Erreur de chargement");
+      });
+  }
 
   useEffect(() => {
     handleGetTickets();
   }, [user?.id]);
 
-  const approachedTicketsRef = useRef(new Set());
-
-  const fetchClientNotifications = useCallback(() => {
-    if (!user?.id) return Promise.resolve({ data: [] });
+  function fetchClientNotifications() {
+    if (!user || !user.id) {
+      return Promise.resolve({ data: [] });
+    }
     return notificationApi.getNotificationsClient(user.id);
-  }, [user?.id]);
+  }
 
-  const handleMinuteElapsed = (idTicket, newMinutes) => {
+  function handleMinuteElapsed(idTicket, newMinutes) {
     ticketApi
       .updateTempsEstime(idTicket, newMinutes)
       .then(() => {
-        setSelectedTicket((prev) =>
-          prev && prev.id === idTicket
-            ? { ...prev, tempsEstime: newMinutes }
-            : prev,
-        );
-        setTicketClient((prev) =>
-          prev.map((t) =>
-            t.id === idTicket ? { ...t, tempsEstime: newMinutes } : t,
-          ),
-        );
+        if (selectedTicket && selectedTicket.id === idTicket) {
+          setSelectedTicket({ ...selectedTicket, tempsEstime: newMinutes });
+        }
 
-        if (newMinutes <= 10 && newMinutes > 0 && !approachedTicketsRef.current.has(idTicket)) {
-          approachedTicketsRef.current.add(idTicket);
+        const nouvelleListe = ticketClient.map((t) => {
+          if (t.id === idTicket) {
+            return { ...t, tempsEstime: newMinutes };
+          }
+          return t;
+        });
+        setTicketClient(nouvelleListe);
+
+        const dejaEnvoye = notifsEnvoyees.includes(idTicket);
+        if (newMinutes <= 10 && newMinutes > 0 && !dejaEnvoye) {
+          setNotifsEnvoyees([...notifsEnvoyees, idTicket]);
           const currentPos = selectedTicket?.position || 1;
-          notificationApi.tourApproche(idTicket, currentPos, newMinutes).catch(console.warn);
+          notificationApi
+            .tourApproche(idTicket, currentPos, newMinutes)
+            .catch(console.warn);
         }
       })
-      .catch(console.error);
-  };
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
-  const annulerTicket = (idTicket) => {
+  function annulerTicket(idTicket) {
     ticketApi
       .annuler(idTicket, user.id)
       .then((res) => {
@@ -162,7 +150,56 @@ export default function Dashboardclient() {
       .catch((err) => {
         setErreur(err?.message || "Erreur lors de l'annulation");
       });
-  };
+  }
+
+  function handleLogout() {
+    if (logout) {
+      logout();
+    } else {
+      localStorage.removeItem("token");
+    }
+    localStorage.removeItem("ticket");
+    localStorage.removeItem("selectedTicketId");
+    navigate("/login");
+  }
+
+  const statut = selectedTicket
+    ? String(selectedTicket.statut).toUpperCase()
+    : "";
+
+  const isEnAttente = statut.includes("ATTENTE");
+  const isEnCours = statut.includes("COURS");
+  const isTermine = statut.includes("TERMIN");
+  const isAnnule = statut.includes("ABSENT");
+
+  let largeurBarre = "0%";
+  if (isEnCours) {
+    largeurBarre = "33.33%";
+  } else if (isTermine) {
+    largeurBarre = "66.66%";
+  }
+
+  let classeEtape1 = "waiting";
+  if (isEnAttente) {
+    classeEtape1 = "current";
+  } else if (isEnCours || isTermine) {
+    classeEtape1 = "done";
+  }
+
+  let classeEtape2 = "waiting";
+  if (isEnCours) {
+    classeEtape2 = "current";
+  } else if (isTermine) {
+    classeEtape2 = "done";
+  }
+
+  let classeEtape3 = isTermine ? "current" : "waiting";
+  let classeEtape4 = isAnnule ? "cancelled-step" : "waiting";
+
+  let initiales = "CL";
+  if (user && user.email) {
+    initiales = user.email.slice(0, 2).toUpperCase();
+  }
 
   return (
     <div className="dashboard">
@@ -193,7 +230,11 @@ export default function Dashboardclient() {
       <div className="layout">
         <aside className="icon-sidebar">
           <div className="sidebar-icons">
-            <Link to="/Etablissement-service" className="sidebar-icon" title="Établissements & Services">
+            <Link
+              to="/Etablissement-service"
+              className="sidebar-icon"
+              title="Établissements & Services"
+            >
               <House size={16} />
             </Link>
             <a href="#" className="sidebar-icon active">
@@ -236,9 +277,7 @@ export default function Dashboardclient() {
 
           <div className="tickets-sidebar-footer">
             <div className="admin-profile-box">
-              <div className="admin-avatar">
-                {user?.email ? user.email.slice(0, 2).toUpperCase() : "CL"}
-              </div>
+              <div className="admin-avatar">{initiales}</div>
               <div className="admin-profile-meta">
                 <strong>{user?.email}</strong>
                 <span>Client</span>
@@ -317,7 +356,7 @@ export default function Dashboardclient() {
                 <div
                   style={{
                     height: "100%",
-                    width: isEnCours ? "33.33%" : isTermine ? "66.66%" : "0%",
+                    width: largeurBarre,
                     backgroundColor: "#10b981",
                     transition: "width 0.4s ease",
                   }}
@@ -325,15 +364,7 @@ export default function Dashboardclient() {
               </div>
 
               <div className="step">
-                <div
-                  className={`step-circle ${
-                    isEnAttente
-                      ? "current"
-                      : isEnCours || isTermine
-                        ? "done"
-                        : "waiting"
-                  }`}
-                >
+                <div className={`step-circle ${classeEtape1}`}>
                   <Clock size={14} />
                 </div>
                 <span className={isEnAttente ? "current-text" : ""}>
@@ -342,11 +373,7 @@ export default function Dashboardclient() {
               </div>
 
               <div className="step">
-                <div
-                  className={`step-circle ${
-                    isEnCours ? "current" : isTermine ? "done" : "waiting"
-                  }`}
-                >
+                <div className={`step-circle ${classeEtape2}`}>
                   <UserCheck size={14} />
                 </div>
                 <span className={isEnCours ? "current-text" : ""}>
@@ -355,18 +382,14 @@ export default function Dashboardclient() {
               </div>
 
               <div className="step">
-                <div
-                  className={`step-circle ${isTermine ? "current" : "waiting"}`}
-                >
+                <div className={`step-circle ${classeEtape3}`}>
                   <Check size={14} />
                 </div>
                 <span className={isTermine ? "current-text" : ""}>Terminé</span>
               </div>
 
               <div className="step">
-                <div
-                  className={`step-circle ${isAnnule ? "cancelled-step" : "waiting"}`}
-                >
+                <div className={`step-circle ${classeEtape4}`}>
                   <X size={14} />
                 </div>
                 <span className={isAnnule ? "cancelled-text" : ""}>Annulé</span>
@@ -376,9 +399,11 @@ export default function Dashboardclient() {
             <div className="cancel-area">
               <button
                 className="cancel-btn"
-                onClick={() =>
-                  selectedTicket && annulerTicket(selectedTicket.id)
-                }
+                onClick={() => {
+                  if (selectedTicket) {
+                    annulerTicket(selectedTicket.id);
+                  }
+                }}
               >
                 <CircleX size={14} />
                 Annuler le ticket

@@ -109,7 +109,7 @@ export default function TableServiceEtablissement() {
       setFormError(
         err?.response?.data?.message ||
           err?.message ||
-          "Erreur lors de l'enregistrement du service."
+          "Erreur lors de l'enregistrement du service.",
       );
     } finally {
       setSubmitting(false);
@@ -131,7 +131,7 @@ export default function TableServiceEtablissement() {
         "error",
         err?.response?.data?.message ||
           err?.message ||
-          "Erreur lors de la suppression du service."
+          "Erreur lors de la suppression du service.",
       );
     } finally {
       setSubmitting(false);
@@ -162,7 +162,10 @@ export default function TableServiceEtablissement() {
                 </div>
                 <div>
                   <h1>Gestion des Services</h1>
-                  <p>Consultez, ajoutez, modifiez ou supprimez les services de votre établissement.</p>
+                  <p>
+                    Consultez, ajoutez, modifiez ou supprimez les services de
+                    votre établissement.
+                  </p>
                 </div>
               </div>
             </div>
@@ -399,8 +402,8 @@ export default function TableServiceEtablissement() {
                       {submitting
                         ? "Enregistrement..."
                         : editingService
-                        ? "Enregistrer les modifications"
-                        : "Créer le service"}
+                          ? "Enregistrer les modifications"
+                          : "Créer le service"}
                     </button>
                   </div>
                 </form>

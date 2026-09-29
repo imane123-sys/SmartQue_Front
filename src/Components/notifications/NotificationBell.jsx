@@ -1,72 +1,99 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Bell, CheckCircle, Info, AlertTriangle, X, Clock, CalendarCheck } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Bell, CheckCircle, Info, AlertTriangle, X, Clock } from "lucide-react";
 import { Client } from "@stomp/stompjs";
 import "./NotificationBell.css";
 
 export default function NotificationBell({ topic, fetchNotifications, role }) {
   const [notifications, setNotifications] = useState([]);
+
   const [unreadCount, setUnreadCount] = useState(0);
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [toast, setToast] = useState(null);
 
   const dropdownRef = useRef(null);
-  const fetchRef = useRef(fetchNotifications);
+
+  function chargerNotifications() {
+    if (!fetchNotifications) {
+      return;
+    }
+
+    fetchNotifications()
+      .then((reponse) => {
+        let liste = [];
+
+        if (reponse && reponse.data) {
+          if (reponse.data.content) {
+            liste = reponse.data.content;
+          } else if (Array.isArray(reponse.data)) {
+            liste = reponse.data;
+          }
+        }
+
+        let listeFiltree = liste;
+        if (role) {
+          listeFiltree = liste.filter((notif) => {
+            if (!notif.destinataireRole) {
+              return true;
+            }
+            return notif.destinataireRole === role;
+          });
+        }
+
+        setNotifications(listeFiltree);
+        setUnreadCount(listeFiltree.length);
+      })
+      .catch((erreur) => {
+        console.warn("Erreur lors du chargement des notifications :", erreur);
+      });
+  }
 
   useEffect(() => {
-    fetchRef.current = fetchNotifications;
-  }, [fetchNotifications]);
-
-  const loadNotifications = useCallback(() => {
-    if (!fetchRef.current) return;
-
-    fetchRef.current()
-      .then((response) => {
-        const raw = response?.data?.content || (Array.isArray(response?.data) ? response.data : []);
-
-        const filtered = role
-          ? raw.filter((n) => !n.destinataireRole || n.destinataireRole === role)
-          : raw;
-
-        setNotifications(filtered);
-        setUnreadCount(filtered.length);
-      })
-      .catch((error) => {
-        console.warn("[NotificationBell] Erreur chargement:", error?.message);
-      });
+    chargerNotifications();
   }, [role]);
 
   useEffect(() => {
-    loadNotifications();
-  }, [loadNotifications]);
+    if (!topic) {
+      return;
+    }
 
-  useEffect(() => {
-    if (!topic) return;
+    let protocole = "ws:";
+    if (window.location.protocol === "https:") {
+      protocole = "wss:";
+    }
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.hostname || "localhost";
-    const brokerURL = `${protocol}//${host}:8080/ws`;
+    const brokerURL = `${protocole}//${host}:8080/ws`;
 
     const client = new Client({
-      brokerURL,
+      brokerURL: brokerURL,
       reconnectDelay: 4000,
+
       onConnect: () => {
         client.subscribe(topic, (message) => {
           try {
-            const newNotif = JSON.parse(message.body);
+            const nouvelleNotif = JSON.parse(message.body);
 
-            if (role && newNotif.destinataireRole && newNotif.destinataireRole !== role) {
+            if (
+              role &&
+              nouvelleNotif.destinataireRole &&
+              nouvelleNotif.destinataireRole !== role
+            ) {
               return;
             }
 
-            setNotifications((prevList) => [newNotif, ...prevList]);
-            setUnreadCount((count) => count + 1);
-            setToast(newNotif);
+            setNotifications((anciennes) => [nouvelleNotif, ...anciennes]);
+
+            setUnreadCount((compteur) => compteur + 1);
+
+            setToast(nouvelleNotif);
 
             setTimeout(() => {
               setToast(null);
             }, 5000);
           } catch (err) {
-            console.error("[NotificationBell] Erreur message:", err);
+            console.error("Erreur lecture message WebSocket :", err);
           }
         });
       },
@@ -80,67 +107,83 @@ export default function NotificationBell({ topic, fetchNotifications, role }) {
   }, [topic, role]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    function clicExterieur(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
+    }
+
+    document.addEventListener("mousedown", clicExterieur);
+    return () => {
+      document.removeEventListener("mousedown", clicExterieur);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleMarkAsRead = () => {
-    setUnreadCount(0);
-  };
+  function toggleDropdown() {
+    const nouveauState = !isOpen;
+    setIsOpen(nouveauState);
 
-  const toggleDropdown = () => {
-    const nextState = !isOpen;
-    setIsOpen(nextState);
-    if (nextState) {
+    if (nouveauState === true) {
       setUnreadCount(0);
-      loadNotifications();
+      chargerNotifications();
     }
-  };
+  }
 
-  const formatDate = (dateStr) => {
+  function toutMarquerCommeLu() {
+    setUnreadCount(0);
+  }
+
+  function formaterDate(dateStr) {
     if (!dateStr) return "";
     try {
       const date = new Date(dateStr);
-      return `${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${date.toLocaleDateString()}`;
-    } catch {
+      const heure = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const jour = date.toLocaleDateString();
+      return `${heure} - ${jour}`;
+    } catch (e) {
       return dateStr;
     }
-  };
+  }
 
-  const getNotificationCategory = (titre = "") => {
-    const lower = titre.toLowerCase();
-    if (lower.includes("annulation") || lower.includes("annul")) {
+  function getCategorie(titre) {
+    let texte = "";
+    if (titre) {
+      texte = titre.toLowerCase();
+    }
+
+    if (texte.includes("annulation") || texte.includes("annul")) {
       return {
         label: "Annulation",
         badgeClass: "badge-annulation",
         icon: <X size={16} color="#ef4444" />,
       };
     }
-    if (lower.includes("approche") || lower.includes("approch")) {
+
+    if (texte.includes("approche") || texte.includes("approch")) {
       return {
         label: "Tour Approche",
         badgeClass: "badge-approche",
         icon: <Clock size={16} color="#d97706" />,
       };
     }
-    if (lower.includes("votre tour") || lower.includes("c'est votre tour")) {
+
+    if (texte.includes("votre tour")) {
       return {
         label: "C'est votre tour",
         badgeClass: "badge-urturn",
         icon: <AlertTriangle size={16} color="#2563eb" />,
       };
     }
+
     return {
       label: "Création",
       badgeClass: "badge-creation",
       icon: <CheckCircle size={16} color="#10b981" />,
     };
-  };
+  }
 
   return (
     <div className="notification-bell-container" ref={dropdownRef}>
@@ -163,13 +206,16 @@ export default function NotificationBell({ topic, fetchNotifications, role }) {
           <div className="notification-header">
             <h3>
               Notifications
-              <span className="notification-header-count">{notifications.length}</span>
+              <span className="notification-header-count">
+                {notifications.length}
+              </span>
             </h3>
+
             {notifications.length > 0 && (
               <button
                 type="button"
                 className="mark-read-btn"
-                onClick={handleMarkAsRead}
+                onClick={toutMarquerCommeLu}
               >
                 Tout marquer comme lu
               </button>
@@ -184,22 +230,30 @@ export default function NotificationBell({ topic, fetchNotifications, role }) {
               </div>
             ) : (
               notifications.map((notif, index) => {
-                const category = getNotificationCategory(notif.titre);
+                const categorie = getCategorie(notif.titre);
+
                 return (
                   <div key={notif.id || index} className="notification-item">
                     <div className="notification-item-icon">
-                      {category.icon}
+                      {categorie.icon}
                     </div>
+
                     <div className="notification-item-content">
                       <div className="notification-item-title">
-                        <span className="notif-title-text">{notif.titre || "Notification"}</span>
-                        <span className={`notif-category-badge ${category.badgeClass}`}>
-                          {category.label}
+                        <span className="notif-title-text">
+                          {notif.titre || "Notification"}
+                        </span>
+                        <span
+                          className={`notif-category-badge ${categorie.badgeClass}`}
+                        >
+                          {categorie.label}
                         </span>
                       </div>
+
                       <div className="notification-item-message">
                         {notif.message}
                       </div>
+
                       <div className="notification-item-meta">
                         {notif.numeroTicket && (
                           <span className="notification-ticket-tag">
@@ -207,7 +261,7 @@ export default function NotificationBell({ topic, fetchNotifications, role }) {
                           </span>
                         )}
                         <span className="notification-item-time">
-                          {formatDate(notif.dateEnvoi)}
+                          {formaterDate(notif.dateEnvoi)}
                         </span>
                       </div>
                     </div>
@@ -225,9 +279,7 @@ export default function NotificationBell({ topic, fetchNotifications, role }) {
             <div className="notification-toast-title">
               🔔 {toast.titre || "Notification"}
             </div>
-            <div className="notification-toast-message">
-              {toast.message}
-            </div>
+            <div className="notification-toast-message">{toast.message}</div>
             {toast.numeroTicket && (
               <div className="notification-toast-ticket">
                 Ticket N° {toast.numeroTicket}

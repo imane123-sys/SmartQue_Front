@@ -1,71 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   Plus,
   Edit2,
   Trash2,
   X,
-  Building2,
   Phone,
   MapPin,
   Clock,
-  Mail,
-  Lock,
 } from "lucide-react";
 import { etablissementApi } from "../../Api/Etablissement";
 import { registerEtablissement } from "../../Api/AuthService";
 
+const formulaireVide = {
+  nom: "",
+  email: "",
+  password: "",
+  adresse: "",
+  telephone: "",
+  type: "Clinique",
+  horaireOuverture: "08:00",
+  horaireFermeture: "18:00",
+};
+
 export default function EtablissementsManagement({
   etablissements = [],
   onRefresh,
-  openAddModalInitially = false,
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("ALL");
-  const [modalOpen, setModalOpen] = useState(openAddModalInitially);
-  const [editingEtablissement, setEditingEtablissement] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [recherche, setRecherche] = useState("");
+  const [typeChoisi, setTypeChoisi] = useState("ALL");
+
+  const [modalOuverte, setModalOuverte] = useState(false);
+  const [etablissementEnModif, setEtablissementEnModif] = useState(null);
+  const [idASupprimer, setIdASupprimer] = useState(null);
+
+  const [formData, setFormData] = useState(formulaireVide);
+  const [erreur, setErreur] = useState("");
+  const [succes, setSucces] = useState("");
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
 
-  const initialFormData = {
-    nom: "",
-    email: "",
-    password: "",
-    adresse: "",
-    telephone: "",
-    type: "Clinique",
-    horaireOuverture: "08:00",
-    horaireFermeture: "18:00",
-  };
+  const types = [...new Set(etablissements.map((e) => e.type).filter(Boolean))];
 
-  const [formData, setFormData] = useState(initialFormData);
+  const etablissementsFiltres = etablissements.filter((e) => {
+    const correspondRecherche =
+      (e.nom || "").toLowerCase().includes(recherche.toLowerCase()) ||
+      (e.adresse || "").toLowerCase().includes(recherche.toLowerCase()) ||
+      (e.telephone || "").includes(recherche);
 
-  const types = Array.from(
-    new Set(etablissements.map((e) => e.type).filter(Boolean)),
-  );
+    const correspondType = typeChoisi === "ALL" || e.type === typeChoisi;
 
-  const filteredEtablissements = etablissements.filter((e) => {
-    const matchesSearch =
-      (e.nom || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (e.adresse || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (e.telephone || "").includes(searchTerm);
-    const matchesType =
-      filterType === "ALL" ||
-      (e.type || "").toLowerCase() === filterType.toLowerCase();
-    return matchesSearch && matchesType;
+    return correspondRecherche && correspondType;
   });
 
-  const handleOpenAdd = () => {
-    setEditingEtablissement(null);
-    setFormData(initialFormData);
-    setFormError("");
-    setModalOpen(true);
+  const ouvrirAjout = () => {
+    setEtablissementEnModif(null);
+    setFormData(formulaireVide);
+    setErreur("");
+    setModalOuverte(true);
   };
 
-  const handleOpenEdit = (etab) => {
-    setEditingEtablissement(etab);
+  const ouvrirModification = (etab) => {
+    setEtablissementEnModif(etab);
     setFormData({
       nom: etab.nom || "",
       email: etab.email || "",
@@ -76,61 +71,47 @@ export default function EtablissementsManagement({
       horaireOuverture: etab.horaireOuverture || "08:00",
       horaireFermeture: etab.horaireFermeture || "18:00",
     });
-    setFormError("");
-    setModalOpen(true);
+    setErreur("");
+    setModalOuverte(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setEditingEtablissement(null);
-    setFormError("");
+  const fermerModale = () => {
+    setModalOuverte(false);
+    setEtablissementEnModif(null);
+    setErreur("");
   };
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setFormError("");
+    setErreur("");
+
+    const donnees = {
+      ...formData,
+      password: formData.password || "200585",
+    };
 
     try {
-      if (editingEtablissement) {
-        await etablissementApi.update(editingEtablissement.id, {
-          nom: formData.nom,
-          adresse: formData.adresse,
-          telephone: formData.telephone,
-          type: formData.type,
-          email: formData.email,
-          horaireOuverture: formData.horaireOuverture,
-          horaireFermeture: formData.horaireFermeture,
-          password: formData.password || "200585",
-        });
-        setFormSuccess("Établissement modifié avec succès !");
+      if (etablissementEnModif) {
+        await etablissementApi.update(etablissementEnModif.id, donnees);
+        setSucces("Établissement modifié avec succès !");
       } else {
-        await registerEtablissement({
-          nom: formData.nom,
-          email: formData.email,
-          password: formData.password || "200585",
-          adresse: formData.adresse,
-          telephone: formData.telephone,
-          type: formData.type,
-          horaireOuverture: formData.horaireOuverture,
-          horaireFermeture: formData.horaireFermeture,
-        });
-        setFormSuccess("Compte établissement créé avec succès !");
+        await registerEtablissement(donnees);
+        setSucces("Compte établissement créé avec succès !");
       }
 
-      handleCloseModal();
+      fermerModale();
       if (onRefresh) onRefresh();
-      setTimeout(() => setFormSuccess(""), 4000);
+      setTimeout(() => setSucces(""), 4000);
     } catch (err) {
-      setFormError(
+      setErreur(
         err?.response?.data?.message ||
           err?.message ||
-          "Erreur lors de l'enregistrement de l'établissement.",
+          "Erreur d'enregistrement.",
       );
     } finally {
       setLoading(false);
@@ -141,15 +122,15 @@ export default function EtablissementsManagement({
     setLoading(true);
     try {
       await etablissementApi.delete(id);
-      setDeleteConfirmId(null);
-      setFormSuccess("Établissement supprimé avec succès.");
+      setIdASupprimer(null);
+      setSucces("Établissement supprimé avec succès.");
       if (onRefresh) onRefresh();
-      setTimeout(() => setFormSuccess(""), 4000);
+      setTimeout(() => setSucces(""), 4000);
     } catch (err) {
-      setFormError(
+      setErreur(
         err?.response?.data?.message ||
           err?.message ||
-          "Erreur lors de la suppression de l'établissement.",
+          "Erreur de suppression.",
       );
     } finally {
       setLoading(false);
@@ -158,8 +139,8 @@ export default function EtablissementsManagement({
 
   return (
     <div className="admin-etablissements-view">
-      {formSuccess && <div className="admin-alert success">{formSuccess}</div>}
-      {formError && <div className="admin-alert error">{formError}</div>}
+      {succes && <div className="admin-alert success">{succes}</div>}
+      {erreur && <div className="admin-alert error">{erreur}</div>}
 
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
@@ -168,15 +149,15 @@ export default function EtablissementsManagement({
             <input
               type="text"
               placeholder="Rechercher par nom, adresse, téléphone..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={recherche}
+              onChange={(e) => setRecherche(e.target.value)}
               className="admin-search-input"
             />
           </div>
 
           <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
+            value={typeChoisi}
+            onChange={(e) => setTypeChoisi(e.target.value)}
             className="admin-filter-select"
           >
             <option value="ALL">
@@ -193,7 +174,7 @@ export default function EtablissementsManagement({
         <button
           type="button"
           className="admin-primary-btn"
-          onClick={handleOpenAdd}
+          onClick={ouvrirAjout}
         >
           <Plus size={16} />
           <span>Ajouter Établissement</span>
@@ -216,14 +197,14 @@ export default function EtablissementsManagement({
               </tr>
             </thead>
             <tbody>
-              {filteredEtablissements.length === 0 ? (
+              {etablissementsFiltres.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="admin-table-empty">
                     Aucun établissement ne correspond aux critères.
                   </td>
                 </tr>
               ) : (
-                filteredEtablissements.map((etab) => (
+                etablissementsFiltres.map((etab) => (
                   <tr key={etab.id}>
                     <td>
                       <span
@@ -305,7 +286,7 @@ export default function EtablissementsManagement({
                         <button
                           type="button"
                           className="admin-action-icon-btn edit"
-                          onClick={() => handleOpenEdit(etab)}
+                          onClick={() => ouvrirModification(etab)}
                           title="Modifier"
                         >
                           <Edit2 size={15} />
@@ -313,7 +294,7 @@ export default function EtablissementsManagement({
                         <button
                           type="button"
                           className="admin-action-icon-btn delete"
-                          onClick={() => setDeleteConfirmId(etab.id)}
+                          onClick={() => setIdASupprimer(etab.id)}
                           title="Supprimer"
                         >
                           <Trash2 size={15} />
@@ -328,19 +309,18 @@ export default function EtablissementsManagement({
         </div>
       </div>
 
-      
-      {modalOpen && (
-        <div className="admin-modal-overlay" onClick={handleCloseModal}>
+      {modalOuverte && (
+        <div className="admin-modal-overlay" onClick={fermerModale}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <div className="admin-modal-header">
               <div>
                 <h3>
-                  {editingEtablissement
+                  {etablissementEnModif
                     ? "Modifier l'Établissement"
                     : "Créer un Compte Établissement"}
                 </h3>
                 <p>
-                  {editingEtablissement
+                  {etablissementEnModif
                     ? "Mettez à jour les informations de cet établissement."
                     : "Renseignez les coordonnées pour créer un nouvel établissement."}
                 </p>
@@ -348,7 +328,7 @@ export default function EtablissementsManagement({
               <button
                 type="button"
                 className="admin-modal-close-btn"
-                onClick={handleCloseModal}
+                onClick={fermerModale}
               >
                 <X size={16} />
               </button>
@@ -356,9 +336,9 @@ export default function EtablissementsManagement({
 
             <form onSubmit={handleSubmit}>
               <div className="admin-modal-body">
-                {formError && (
+                {erreur && (
                   <div className="admin-alert error" style={{ margin: 0 }}>
-                    {formError}
+                    {erreur}
                   </div>
                 )}
 
@@ -370,7 +350,7 @@ export default function EtablissementsManagement({
                     required
                     placeholder="ex: Clinique Al Amal, BMCE Bank..."
                     value={formData.nom}
-                    onChange={handleFormChange}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -383,27 +363,27 @@ export default function EtablissementsManagement({
                       required
                       placeholder="contact@etablissement.ma"
                       value={formData.email}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                     />
                   </div>
 
                   <div className="admin-form-group">
                     <label>
-                      {editingEtablissement
+                      {etablissementEnModif
                         ? "Nouveau Mot de passe (optionnel)"
                         : "Mot de passe *"}
                     </label>
                     <input
                       type="password"
                       name="password"
-                      required={!editingEtablissement}
+                      required={!etablissementEnModif}
                       placeholder={
-                        editingEtablissement
+                        etablissementEnModif
                           ? "Laisser vide pour ne pas changer"
                           : "••••••••"
                       }
                       value={formData.password}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -414,7 +394,7 @@ export default function EtablissementsManagement({
                     <select
                       name="type"
                       value={formData.type}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                       required
                     >
                       <option value="Clinique">Clinique</option>
@@ -433,7 +413,7 @@ export default function EtablissementsManagement({
                       name="telephone"
                       placeholder="ex: 0523488100"
                       value={formData.telephone}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -446,7 +426,7 @@ export default function EtablissementsManagement({
                     required
                     placeholder="ex: Avenue Mohammed V, Béni Mellal"
                     value={formData.adresse}
-                    onChange={handleFormChange}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -457,7 +437,7 @@ export default function EtablissementsManagement({
                       type="time"
                       name="horaireOuverture"
                       value={formData.horaireOuverture}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -467,7 +447,7 @@ export default function EtablissementsManagement({
                       type="time"
                       name="horaireFermeture"
                       value={formData.horaireFermeture}
-                      onChange={handleFormChange}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
@@ -477,7 +457,7 @@ export default function EtablissementsManagement({
                 <button
                   type="button"
                   className="admin-secondary-btn"
-                  onClick={handleCloseModal}
+                  onClick={fermerModale}
                   disabled={loading}
                 >
                   Annuler
@@ -489,7 +469,7 @@ export default function EtablissementsManagement({
                 >
                   {loading
                     ? "Enregistrement..."
-                    : editingEtablissement
+                    : etablissementEnModif
                       ? "Enregistrer les modifications"
                       : "Créer l'Établissement"}
                 </button>
@@ -499,10 +479,10 @@ export default function EtablissementsManagement({
         </div>
       )}
 
-      {deleteConfirmId && (
+      {idASupprimer && (
         <div
           className="admin-modal-overlay"
-          onClick={() => setDeleteConfirmId(null)}
+          onClick={() => setIdASupprimer(null)}
         >
           <div
             className="admin-modal"
@@ -514,7 +494,7 @@ export default function EtablissementsManagement({
               <button
                 type="button"
                 className="admin-modal-close-btn"
-                onClick={() => setDeleteConfirmId(null)}
+                onClick={() => setIdASupprimer(null)}
               >
                 <X size={16} />
               </button>
@@ -528,15 +508,14 @@ export default function EtablissementsManagement({
                 }}
               >
                 Êtes-vous certain de vouloir supprimer cet établissement ? Cette
-                action est irréversible et supprimera également les services
-                associés.
+                action est irréversible.
               </p>
             </div>
             <div className="admin-modal-footer">
               <button
                 type="button"
                 className="admin-secondary-btn"
-                onClick={() => setDeleteConfirmId(null)}
+                onClick={() => setIdASupprimer(null)}
                 disabled={loading}
               >
                 Annuler
@@ -545,7 +524,7 @@ export default function EtablissementsManagement({
                 type="button"
                 className="admin-primary-btn"
                 style={{ background: "var(--admin-danger)" }}
-                onClick={() => handleDelete(deleteConfirmId)}
+                onClick={() => handleDelete(idASupprimer)}
                 disabled={loading}
               >
                 {loading ? "Suppression..." : "Confirmer la suppression"}

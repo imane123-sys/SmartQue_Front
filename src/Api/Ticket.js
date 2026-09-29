@@ -1,6 +1,7 @@
 import connexion from "./Connexion";
 
 export const ticketApi = {
+  getAll: () => connexion.get("/api/tickets"),
   reserve: (data) => connexion.post("/api/tickets/reserve", data),
 
   getById: (id) => connexion.get(`/api/tickets/${id}`),

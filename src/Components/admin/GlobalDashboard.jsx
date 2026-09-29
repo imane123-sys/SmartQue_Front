@@ -20,23 +20,47 @@ export default function GlobalDashboard({
   setActiveTab,
 }) {
   const countEnAttente = tickets.filter(
-    (t) => String(t.statut).toUpperCase() === "EN_ATTENTE"
+    (t) => String(t.statut).toUpperCase() === "EN_ATTENTE",
   ).length;
-  const countEnCours = tickets.filter(
-    (t) => String(t.statut).toUpperCase() === "EN_COURS"
-  ).length;
-  const countTermine = tickets.filter(
-    (t) => String(t.statut).toUpperCase() === "TERMINE"
-  ).length;
-  const countAbsent = tickets.filter((t) => {
-    const s = String(t.statut).toUpperCase();
-    return s === "ABSENT" || s === "ANNULE";
-  }).length;
 
-  const totalTickets = tickets.length || (countEnAttente + countEnCours + countTermine + countAbsent);
+  const countEnCours = tickets.filter(
+    (t) => String(t.statut).toUpperCase() === "EN_COURS",
+  ).length;
+
+  const countTermine = tickets.filter(
+    (t) => String(t.statut).toUpperCase() === "TERMINE",
+  ).length;
+
+  const countAbsent = tickets.filter(
+    (t) => String(t.statut).toUpperCase() === "ABSENT",
+  ).length;
+
+  const totalTickets = tickets.length;
+
+  const getPercent = (count) =>
+    totalTickets > 0
+      ? `${Math.round((count / totalTickets) * 100)}% du total`
+      : "0%";
+
+  const getBadge = (statut) => {
+    const s = String(statut).toUpperCase();
+
+    if (s === "EN_COURS") {
+      return { cls: "status-current", text: "En cours" };
+    }
+
+    if (s === "TERMINE") {
+      return { cls: "status-done", text: "Terminé" };
+    }
+
+    if (s === "ABSENT") {
+      return { cls: "status-absent", text: " Absent" };
+    }
+
+    return { cls: "status-waiting", text: "En attente" };
+  };
 
   const recentEtablissements = etablissements.slice(0, 5);
-
   const recentTickets = tickets.slice(0, 5);
 
   return (
@@ -45,8 +69,6 @@ export default function GlobalDashboard({
         <div
           className="admin-stat-card"
           onClick={() => setActiveTab("etablissements")}
-          role="button"
-          tabIndex={0}
         >
           <div className="admin-stat-header">
             <span className="admin-stat-title">Établissements</span>
@@ -54,6 +76,7 @@ export default function GlobalDashboard({
               <Building2 size={20} />
             </div>
           </div>
+
           <div className="admin-stat-value">{etablissements.length}</div>
           <div className="admin-stat-desc">Partenaires et cliniques actifs</div>
         </div>
@@ -61,8 +84,6 @@ export default function GlobalDashboard({
         <div
           className="admin-stat-card"
           onClick={() => setActiveTab("services")}
-          role="button"
-          tabIndex={0}
         >
           <div className="admin-stat-header">
             <span className="admin-stat-title">Services</span>
@@ -70,6 +91,7 @@ export default function GlobalDashboard({
               <Layers size={20} />
             </div>
           </div>
+
           <div className="admin-stat-value">{services.length}</div>
           <div className="admin-stat-desc">Prestations configurées</div>
         </div>
@@ -77,8 +99,6 @@ export default function GlobalDashboard({
         <div
           className="admin-stat-card"
           onClick={() => setActiveTab("utilisateurs")}
-          role="button"
-          tabIndex={0}
         >
           <div className="admin-stat-header">
             <span className="admin-stat-title">Utilisateurs</span>
@@ -86,6 +106,7 @@ export default function GlobalDashboard({
               <Users size={20} />
             </div>
           </div>
+
           <div className="admin-stat-value">{clients.length}</div>
           <div className="admin-stat-desc">Clients, agents & admins</div>
         </div>
@@ -93,8 +114,6 @@ export default function GlobalDashboard({
         <div
           className="admin-stat-card"
           onClick={() => setActiveTab("tickets")}
-          role="button"
-          tabIndex={0}
         >
           <div className="admin-stat-header">
             <span className="admin-stat-title">Total Tickets</span>
@@ -102,6 +121,7 @@ export default function GlobalDashboard({
               <Ticket size={20} />
             </div>
           </div>
+
           <div className="admin-stat-value">{totalTickets}</div>
           <div className="admin-stat-desc">Tickets suivis dans le système</div>
         </div>
@@ -110,6 +130,7 @@ export default function GlobalDashboard({
       <div className="admin-card-section">
         <div className="admin-card-header">
           <h3>Répartition des Statuts de Tickets</h3>
+
           <button
             type="button"
             className="admin-secondary-btn"
@@ -125,60 +146,88 @@ export default function GlobalDashboard({
           <div className="admin-status-bar-box waiting">
             <div className="admin-status-bar-header">
               <span>
-                <Clock size={14} style={{ display: "inline", marginRight: "6px" }} />
+                <Clock
+                  size={14}
+                  style={{ display: "inline", marginRight: "6px" }}
+                />
                 En attente
               </span>
               <strong>{countEnAttente}</strong>
             </div>
-            <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
-              {totalTickets > 0
-                ? `${Math.round((countEnAttente / totalTickets) * 100)}% du total`
-                : "0%"}
+
+            <div
+              style={{
+                fontSize: "11px",
+                color: "var(--admin-muted-text)",
+              }}
+            >
+              {getPercent(countEnAttente)}
             </div>
           </div>
 
           <div className="admin-status-bar-box current">
             <div className="admin-status-bar-header">
               <span>
-                <UserCheck size={14} style={{ display: "inline", marginRight: "6px" }} />
+                <UserCheck
+                  size={14}
+                  style={{ display: "inline", marginRight: "6px" }}
+                />
                 En cours
               </span>
               <strong>{countEnCours}</strong>
             </div>
-            <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
-              {totalTickets > 0
-                ? `${Math.round((countEnCours / totalTickets) * 100)}% du total`
-                : "0%"}
+
+            <div
+              style={{
+                fontSize: "11px",
+                color: "var(--admin-muted-text)",
+              }}
+            >
+              {getPercent(countEnCours)}
             </div>
           </div>
 
           <div className="admin-status-bar-box done">
             <div className="admin-status-bar-header">
               <span>
-                <CheckCircle2 size={14} style={{ display: "inline", marginRight: "6px" }} />
+                <CheckCircle2
+                  size={14}
+                  style={{ display: "inline", marginRight: "6px" }}
+                />
                 Terminés
               </span>
               <strong>{countTermine}</strong>
             </div>
-            <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
-              {totalTickets > 0
-                ? `${Math.round((countTermine / totalTickets) * 100)}% du total`
-                : "0%"}
+
+            <div
+              style={{
+                fontSize: "11px",
+                color: "var(--admin-muted-text)",
+              }}
+            >
+              {getPercent(countTermine)}
             </div>
           </div>
 
           <div className="admin-status-bar-box absent">
             <div className="admin-status-bar-header">
               <span>
-                <AlertCircle size={14} style={{ display: "inline", marginRight: "6px" }} />
+                <AlertCircle
+                  size={14}
+                  style={{ display: "inline", marginRight: "6px" }}
+                />
                 Absents / Annulés
               </span>
               <strong>{countAbsent}</strong>
             </div>
-            <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
-              {totalTickets > 0
-                ? `${Math.round((countAbsent / totalTickets) * 100)}% du total`
-                : "0%"}
+
+            <div
+              style={{
+                fontSize: "11px",
+                color: "var(--admin-muted-text)",
+              }}
+            >
+              {getPercent(countAbsent)}
             </div>
           </div>
         </div>
@@ -193,6 +242,7 @@ export default function GlobalDashboard({
           <div className="admin-quick-action-icon">
             <PlusCircle size={20} />
           </div>
+
           <div className="admin-quick-action-text">
             <strong>Créer Établissement</strong>
             <span>Inscrire un nouveau compte</span>
@@ -207,6 +257,7 @@ export default function GlobalDashboard({
           <div className="admin-quick-action-icon">
             <Layers size={20} />
           </div>
+
           <div className="admin-quick-action-text">
             <strong>Gérer les Services</strong>
             <span>Ajouter ou ajuster les durées</span>
@@ -221,6 +272,7 @@ export default function GlobalDashboard({
           <div className="admin-quick-action-icon">
             <Users size={20} />
           </div>
+
           <div className="admin-quick-action-text">
             <strong>Gérer Utilisateurs</strong>
             <span>Clients, agents et administrateurs</span>
@@ -235,6 +287,7 @@ export default function GlobalDashboard({
           <div className="admin-quick-action-icon">
             <Ticket size={20} />
           </div>
+
           <div className="admin-quick-action-text">
             <strong>Suivre les Files</strong>
             <span>Consulter les tickets en direct</span>
@@ -253,16 +306,24 @@ export default function GlobalDashboard({
               justifyContent: "space-between",
             }}
           >
-            <h4 style={{ fontSize: "14px", fontWeight: 700 }}>Derniers Établissements</h4>
+            <h4 style={{ fontSize: "14px", fontWeight: 700 }}>
+              Derniers Établissements
+            </h4>
+
             <button
               type="button"
               className="admin-secondary-btn"
-              style={{ height: "28px", fontSize: "11px", padding: "0 10px" }}
+              style={{
+                height: "28px",
+                fontSize: "11px",
+                padding: "0 10px",
+              }}
               onClick={() => setActiveTab("etablissements")}
             >
               Gérer
             </button>
           </div>
+
           <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
@@ -272,6 +333,7 @@ export default function GlobalDashboard({
                   <th>Téléphone</th>
                 </tr>
               </thead>
+
               <tbody>
                 {recentEtablissements.length === 0 ? (
                   <tr>
@@ -284,15 +346,23 @@ export default function GlobalDashboard({
                     <tr key={e.id}>
                       <td>
                         <strong>{e.nom}</strong>
-                        <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
+
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            color: "var(--admin-muted-text)",
+                          }}
+                        >
                           {e.adresse || "—"}
                         </div>
                       </td>
+
                       <td>
                         <span className="admin-badge role-etablissement">
                           {e.type || "Établissement"}
                         </span>
                       </td>
+
                       <td>{e.telephone || "—"}</td>
                     </tr>
                   ))
@@ -312,16 +382,24 @@ export default function GlobalDashboard({
               justifyContent: "space-between",
             }}
           >
-            <h4 style={{ fontSize: "14px", fontWeight: 700 }}>Derniers Tickets Émis</h4>
+            <h4 style={{ fontSize: "14px", fontWeight: 700 }}>
+              Derniers Tickets Émis
+            </h4>
+
             <button
               type="button"
               className="admin-secondary-btn"
-              style={{ height: "28px", fontSize: "11px", padding: "0 10px" }}
+              style={{
+                height: "28px",
+                fontSize: "11px",
+                padding: "0 10px",
+              }}
               onClick={() => setActiveTab("tickets")}
             >
               Tous
             </button>
           </div>
+
           <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
@@ -331,6 +409,7 @@ export default function GlobalDashboard({
                   <th>Statut</th>
                 </tr>
               </thead>
+
               <tbody>
                 {recentTickets.length === 0 ? (
                   <tr>
@@ -340,35 +419,31 @@ export default function GlobalDashboard({
                   </tr>
                 ) : (
                   recentTickets.map((t) => {
-                    const s = String(t.statut).toUpperCase();
-                    let badgeClass = "status-waiting";
-                    let label = t.statut;
-                    if (s === "EN_COURS") {
-                      badgeClass = "status-current";
-                      label = "En cours";
-                    } else if (s === "TERMINE") {
-                      badgeClass = "status-done";
-                      label = "Terminé";
-                    } else if (s === "ABSENT" || s === "ANNULE") {
-                      badgeClass = "status-absent";
-                      label = "Annulé / Absent";
-                    } else {
-                      label = "En attente";
-                    }
+                    const { cls, text } = getBadge(t.statut);
 
                     return (
                       <tr key={t.id}>
                         <td>
                           <span className="admin-ticket-mono">#{t.numero}</span>
                         </td>
+
                         <td>
-                          <strong>{t.nomService || t.serviceNom || "Service"}</strong>
-                          <div style={{ fontSize: "11px", color: "var(--admin-muted-text)" }}>
+                          <strong>
+                            {t.nomService || t.serviceNom || "Service"}
+                          </strong>
+
+                          <div
+                            style={{
+                              fontSize: "11px",
+                              color: "var(--admin-muted-text)",
+                            }}
+                          >
                             {t.nomEtablissement || t.etablissementNom || "—"}
                           </div>
                         </td>
+
                         <td>
-                          <span className={`admin-badge ${badgeClass}`}>{label}</span>
+                          <span className={`admin-badge ${cls}`}>{text}</span>
                         </td>
                       </tr>
                     );

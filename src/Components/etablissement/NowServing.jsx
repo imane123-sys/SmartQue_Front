@@ -40,11 +40,11 @@ export default function NowServing() {
       })
       .catch((err) => {
         setErreur(err?.message || "Erreur");
-        console.log(err);
       });
   };
 
-  const hasTicketEnCours = Array.isArray(ticketEnCours) && ticketEnCours.length > 0;
+  const hasTicketEnCours =
+    Array.isArray(ticketEnCours) && ticketEnCours.length > 0;
   const nextWaitingTicket =
     Array.isArray(TicketEnAttente) && TicketEnAttente.length > 0
       ? TicketEnAttente[0]
